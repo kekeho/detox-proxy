@@ -14,17 +14,17 @@ proc callback(req: Request) {.async.} =
   echo "URL"
   echo $req.url
 
+  # Connect to requested host
   let client = newAsyncHttpClient()
   let response: AsyncResponse = await client.request($req.url, req.reqMethod, req.body, req.headers)
 
-  echo "status"
-  echo response.status
-
-  var body = await response.body
+  # Get data from requested host
+  var body: string = ""
   let (isExist, bodyStreamResult) = await response.bodyStream.read
   if isExist:
-    body = bodyStreamResult
+    body =  bodyStreamResult
 
+  # Return response to client
   await req.respond(response.code, body, response.headers)
 
 
