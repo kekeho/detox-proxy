@@ -52,7 +52,7 @@ proc toMethod(str: string): Option[HttpMethod] =
 
 proc httpRequestParser(raw: string): Option[HttpRequest] =
     var req = HttpRequest()
-    let lines = raw.split("\n")
+    let lines = raw.split("\c\n")
     try:
         # Method
         let method_raw = lines[0]
