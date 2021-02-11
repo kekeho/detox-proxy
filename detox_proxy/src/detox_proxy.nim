@@ -4,55 +4,75 @@
 # https://opensource.org/licenses/MIT
 
 
+# TODO: File descriptor not registered. [ValueError]がどこかでおきてるので調査する
+
+
 import asyncdispatch
 import asyncnet
 import options
 import net
 import http
+import times
 
 
-var connlist {.threadvar.}: seq[(AsyncSocket, AsyncSocket)]
+type
+    Connection = object
+        a: AsyncSocket
+        b: AsyncSocket
+        timestamp: int64  # unix timestamp
+
+
+proc safeClose(a: AsyncSocket, b: AsyncSocket) =
+    if not a.isClosed:
+        a.close()
+    if not b.isClosed:
+        b.close()
+
+
+var connlist {.threadvar.}: seq[Connection]
 
 
 proc connwatch() {.async.} =
+    const interval = 2  # 2s
+    const timelimit = 8 # 8s
     while true:
-        var new_connlist: seq[(AsyncSocket, AsyncSocket)]
+        var new_connlist: seq[Connection]
+        let nowUnix = now().toTime().toUnix()
         for i, conn in connlist:
-            if not (conn[0].isClosed and conn[1].isClosed):
+            # timestamp check
+            if nowUnix - conn.timestamp > timelimit:
+                echo "Auto close"
+                safeClose(conn.a, conn.b)
+
+            if not (conn.a.isClosed and conn.b.isClosed):
                 new_connlist.add(conn)
+            
         connlist = new_connlist
 
         echo "===== CONNECTIONS ===="
         echo connlist.len
-        await sleepAsync(2000)
+        await sleepAsync(interval * 1000)
 
 
 proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
-    connlist.add((from_socket, to_socket))
+    var newConn = Connection(a: from_socket, b: to_socket, timestamp: now().toTime.toUnix)
+    connlist.add(newConn)
     while true:
-        if from_socket.isClosed:
-            echo "FROM_SOCKET CLOSED"
-            to_socket.close()
-            return
-        elif to_socket.isClosed:
-            echo "TO_SOCKET CLOSED"
-            from_socket.close()
+        if from_socket.isClosed or to_socket.isClosed:
+            safeClose(from_socket, to_socket)
             return
         
         try:
             let data = await from_socket.recv(BufferSize)
-            if data.len == 0: break
+            if data.len == 0:
+                safeClose(from_socket, to_socket)
+                return
             await to_socket.send(data)
         except OSError:
             echo "OSERROR"
-            if not from_socket.isClosed:
-                from_socket.close()
-            if not to_socket.isClosed:
-                to_socket.close()
-                
+            safeClose(from_socket, to_socket)
 
-    from_socket.close()
-    to_socket.close()
+    safeClose(from_socket, to_socket)
     echo "CLOSE"
 
 
@@ -86,9 +106,8 @@ proc processClient(client: AsyncSocket) {.async.} =
             return
         await client.send("HTTP/1.1 200 OK\c\n\c\n")
     else:
-        if host.isClosed:
-            if not client.isClosed:
-                client.close()
+        if host.isClosed or client.isClosed:
+            safeClose(host, client)
             return
         await host.send(data)
 
