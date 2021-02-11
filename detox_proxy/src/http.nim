@@ -81,6 +81,7 @@ proc httpRequestParser*(raw: string): Option[HttpRequest] =
 
         let method_type: Option[HttpMethod] = toMethod(method_path_proto_splitted[0])
         if method_type.isNone():
+            echo "METHOD TYPE IS NONE " & raw
             return none(HttpRequest)
         req.reqMethod = method_type.get()
 
