@@ -24,8 +24,28 @@ type
         headers*: Table[string, string]
         reqMethod*: HttpMethod
         path: string
+        port: Port
         protocol: string
         body*: string
+
+
+proc hasHeader(t: Table[string, auto], key: string): bool =
+    if t.hasKey(key):
+        return true
+
+    for k in t.keys:
+        if k.toUpper == key.toUpper:
+            return true
+    
+    return false
+
+
+proc getHeader[T](t: Table[string, T], key: string): Option[T] =
+    for k in t.keys:
+        if k.toUpper == key.toUpper:
+            return some(t[k])
+    
+    return none(T)
 
 
 proc toMethod(str: string): Option[HttpMethod] =
@@ -65,7 +85,16 @@ proc httpRequestParser(raw: string): Option[HttpRequest] =
             return none(HttpRequest)
         req.reqMethod = method_type.get()
 
-        req.path = method_path_proto_splitted[1]
+        let path_raw = method_path_proto_splitted[1]
+        if ":" in path_raw.replace("://", ""):
+            # port-number provided
+            let path_port = path_raw.split(":")
+            let path = path_raw.split(":")[len(path_port)-2].strip
+            let port = path_raw.split(":")[len(path_port)-1].strip.parseInt
+            req.path = path; req.port = Port(port)
+        else:
+            req.path = path_raw
+            req.port = Port(80)
         req.protocol = method_path_proto_splitted[2]
 
         # Header
@@ -77,7 +106,7 @@ proc httpRequestParser(raw: string): Option[HttpRequest] =
             let key = h.split(":")[0].strip()
             let value = h.split(":")[1].strip()
 
-            if req.headers.hasKey(key):
+            if req.headers.hasHeader(key):
                 # Join with comma https://tools.ietf.org/html/rfc7230#section-3.2
                 req.headers[key] = (req.headers[key] & ", " & value)
             else:
@@ -86,7 +115,7 @@ proc httpRequestParser(raw: string): Option[HttpRequest] =
         # Body
         let body_raw = raw.split("\n")[idx+1..len(lines)-1].join("\n")
         req.body = body_raw
-    except IndexDefect:
+    except IndexDefect, ValueError:
         return none(HttpRequest)
 
     return some(req)
@@ -95,16 +124,6 @@ proc httpRequestParser(raw: string): Option[HttpRequest] =
 proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
     while true:
         let data = await from_socket.recv(BufferSize)
-        let maybeReq = httpRequestParser(data)
-        if maybeReq.isNone():
-            if not from_socket.isClosed:
-                from_socket.close()
-            elif not to_socket.isClosed:
-                to_socket.close()
-            return
-        
-        let req = maybeReq.get()
-
         if data.len == 0: break
         await to_socket.send(data)
 
@@ -117,10 +136,32 @@ proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
 
 
 proc processClient(client: AsyncSocket) {.async.} =
-    let host = newAsyncSocket(buffered=false)
-    await host.connect("wa3.i-3-i.info", Port(443))
+    let data = await client.recv(BufferSize)
+    echo data
+    let maybeReq = httpRequestParser(data)
+    if maybeReq.isNone():
+        echo "failed to parse"
+        if not client.isClosed:
+            client.close()
+        return
+    
+    let req = maybeReq.get()
+    echo req
 
-    echo "CONNECTED"
+    # connect to remote
+    let host = newAsyncSocket(buffered=false)
+
+    let maybeHost = req.headers.getHeader("host")
+    if maybeHost.isSome:
+        await host.connect(maybeHost.get(), req.port)
+    echo "CONNECTED " & req.path & ":" & $req.port
+
+    if req.reqMethod == HttpMethod.Connect:
+        # return 200 ok to client
+        await client.send("HTTP/1.1 200 OK\c\n\c\n")
+    else:
+        await host.send(data)
+
     asyncCheck relay(client, host)
     asyncCheck relay(host, client)
 
