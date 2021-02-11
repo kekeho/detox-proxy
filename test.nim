@@ -23,6 +23,8 @@ type
     HttpRequest = object
         headers*: Table[string, string]
         reqMethod*: HttpMethod
+        path: string
+        protocol: string
         body*: string
 
 
@@ -54,19 +56,22 @@ proc httpRequestParser(raw: string): Option[HttpRequest] =
     var req = HttpRequest()
     let lines = raw.split("\c\n")
     try:
-        # Method
-        let method_raw = lines[0]
-        let method_raw_splitted = method_raw.split(" ")
-        let method_type: Option[HttpMethod] = toMethod(method_raw_splitted[0])
+        # Method, path, protocol
+        let method_path_proto_raw = lines[0]
+        let method_path_proto_splitted = method_path_proto_raw.split(" ")
+
+        let method_type: Option[HttpMethod] = toMethod(method_path_proto_splitted[0])
         if method_type.isNone():
             return none(HttpRequest)
         req.reqMethod = method_type.get()
+
+        req.path = method_path_proto_splitted[1]
+        req.protocol = method_path_proto_splitted[2]
 
         # Header
         var idx: int = 0
         for idx, h in lines[1..len(lines)-1]:
             if not (":" in h):
-                echo "break"
                 break  # end of header
 
             let key = h.split(":")[0].strip()
@@ -99,7 +104,7 @@ proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
             return
         
         let req = maybeReq.get()
-        echo req.headers
+
         if data.len == 0: break
         await to_socket.send(data)
 
