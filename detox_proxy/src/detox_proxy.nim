@@ -16,10 +16,11 @@ import times
 
 
 type
-    Connection = object
+    Connection = ref object
         a: AsyncSocket
         b: AsyncSocket
         timestamp: int64  # unix timestamp
+        last_timestamp: int64  # unix timestamp
 
 
 proc safeClose(a: AsyncSocket, b: AsyncSocket) =
@@ -29,24 +30,31 @@ proc safeClose(a: AsyncSocket, b: AsyncSocket) =
         b.close()
 
 
+proc safeClose(conn: Connection) =
+    safeClose(conn.a, conn.b)
+
+
 var connlist {.threadvar.}: seq[Connection]
 
 
 proc connwatch() {.async.} =
     const interval = 2  # 2s
-    const timelimit = 8 # 8s
+    const nodata_timelimit = 20 # 20s (from last recv/send)
+    const timelimit = 120 # 120s (from connection start)
     while true:
         var new_connlist: seq[Connection]
-        let nowUnix = now().toTime().toUnix()
+        let nowUnix = now().toTime.toUnix
         for i, conn in connlist:
             # timestamp check
-            if nowUnix - conn.timestamp > timelimit:
-                echo "Auto close"
-                safeClose(conn.a, conn.b)
-
-            if not (conn.a.isClosed and conn.b.isClosed):
+            if nowUnix - conn.last_timestamp > nodata_timelimit:
+                safeClose(conn)
+            elif nowUnix - conn.timestamp > timelimit:
+                safeClose(conn)
+            elif conn.a.isClosed or conn.b.isClosed:
+                safeClose(conn)
+            else:
                 new_connlist.add(conn)
-            
+
         connlist = new_connlist
 
         echo "===== CONNECTIONS ===="
@@ -55,24 +63,27 @@ proc connwatch() {.async.} =
 
 
 proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
-    var newConn = Connection(a: from_socket, b: to_socket, timestamp: now().toTime.toUnix)
-    connlist.add(newConn)
+    let conn = Connection(
+        a: from_socket, b: to_socket,
+        timestamp: now().toTime.toUnix, last_timestamp: 0,
+    )
+    connlist.add(conn)
     while true:
-        if from_socket.isClosed or to_socket.isClosed:
-            safeClose(from_socket, to_socket)
+        if conn.a.isClosed or conn.b.isClosed:
+            safeClose(conn)
             return
         
         try:
-            let data = await from_socket.recv(BufferSize)
+            let data = await conn.a.recv(BufferSize)
             if data.len == 0:
-                safeClose(from_socket, to_socket)
+                safeClose(conn)
                 return
-            await to_socket.send(data)
+            await conn.b.send(data)
+            conn.last_timestamp = now().toTime.toUnix
         except OSError:
-            echo "OSERROR"
-            safeClose(from_socket, to_socket)
+            safeClose(conn)
 
-    safeClose(from_socket, to_socket)
+    safeClose(conn)
     echo "CLOSE"
 
 
