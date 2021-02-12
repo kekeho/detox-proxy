@@ -4,11 +4,9 @@
 # https://opensource.org/licenses/MIT
 
 
-# TODO: File descriptor not registered. [ValueError]がどこかでおきてるので調査する
-
-
 import asyncdispatch
 import asyncnet
+import nativesockets
 import options
 import net
 import http
@@ -31,6 +29,7 @@ proc safeClose(a: AsyncSocket, b: AsyncSocket) =
 
 
 proc safeClose(conn: Connection) =
+    echo "DISCONNECTED"
     safeClose(conn.a, conn.b)
 
 
@@ -38,7 +37,6 @@ var connlist {.threadvar.}: seq[Connection]
 
 
 proc connwatch() {.async.} =
-    const interval = 2  # 2s
     const nodata_timelimit = 20 # 20s (from last recv/send)
     const timelimit = 120 # 120s (from connection start)
     while true:
@@ -59,7 +57,7 @@ proc connwatch() {.async.} =
 
         echo "===== CONNECTIONS ===="
         echo connlist.len
-        await sleepAsync(interval * 1000)
+        await sleepAsync(300)
 
 
 proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
@@ -80,16 +78,14 @@ proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
                 return
             await conn.b.send(data)
             conn.last_timestamp = now().toTime.toUnix
-        except OSError:
+        except OSError, ValueError:
             safeClose(conn)
-
-    safeClose(conn)
-    echo "CLOSE"
-
+            return
 
 proc processClient(client: AsyncSocket) {.async.} =
     let data = await client.recv(BufferSize)
     if data.len == 0:
+        echo "LEN"
         return
 
     let maybeReq = httpRequestParser(data)
@@ -105,17 +101,37 @@ proc processClient(client: AsyncSocket) {.async.} =
     let host = newAsyncSocket(buffered=false)
 
     let maybeHost = req.headers.getHeader("host")
-    if maybeHost.isSome:
+    if maybeHost.isNone:
+        safeClose(client, host)
+        return
+
+    try:
+        echo getHostByName(maybeHost.get())  # host check
+    except OSError:
+        # wrong host/port
+        echo "WRONG address/port"
+        await client.send("HTTP/1.1 404 Not found\c\n\c\ndetox-proxy: address/port not found\c\n")
+        safeClose(host, client)
+        return
+
+    try:
         await host.connect(maybeHost.get(), req.port)
+    except OSError:
+        # connection error host/port
+        echo "Connection refused"
+        await client.send("HTTP/1.1 502 Bad gateway\c\n\c\ndetox-proxy: connection refused (can't connect to requested server)\c\n")
+        safeClose(host, client)
+        return
+
     echo "CONNECTED " & req.path & ":" & $req.port
 
     if req.reqMethod == HttpMethod.Connect:
         # return 200 ok to client
         if client.isClosed:
-            if not host.isClosed:
-                host.close()
+            safeClose(host, client)
             return
-        await client.send("HTTP/1.1 200 OK\c\n\c\n")
+
+        await client.send("HTTP/1.1 200 Connection established\c\n\c\n")
     else:
         if host.isClosed or client.isClosed:
             safeClose(host, client)
@@ -135,6 +151,7 @@ proc serve() {.async.} =
     while true:
         let client = await server.accept()
         asyncCheck processClient(client)
+
 
 when isMainModule:
     asyncCheck serve()
