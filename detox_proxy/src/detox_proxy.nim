@@ -17,7 +17,6 @@ type
     Connection = ref object
         a: AsyncSocket
         b: AsyncSocket
-        timestamp: int64  # unix timestamp
         last_timestamp: int64  # unix timestamp
 
 
@@ -37,16 +36,14 @@ var connlist {.threadvar.}: seq[Connection]
 
 
 proc connwatch() {.async.} =
-    const nodata_timelimit = 20 # 20s (from last recv/send)
-    const timelimit = 120 # 120s (from connection start)
+    const nodata_timelimit = 120 # 120s (from last recv/send)
+
     while true:
         var new_connlist: seq[Connection]
         let nowUnix = now().toTime.toUnix
         for i, conn in connlist:
             # timestamp check
             if nowUnix - conn.last_timestamp > nodata_timelimit:
-                safeClose(conn)
-            elif nowUnix - conn.timestamp > timelimit:
                 safeClose(conn)
             elif conn.a.isClosed or conn.b.isClosed:
                 safeClose(conn)
@@ -63,7 +60,7 @@ proc connwatch() {.async.} =
 proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
     let conn = Connection(
         a: from_socket, b: to_socket,
-        timestamp: now().toTime.toUnix, last_timestamp: 0,
+        last_timestamp: 0,
     )
     connlist.add(conn)
     while true:
