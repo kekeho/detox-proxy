@@ -120,6 +120,8 @@ proc processClient(client: AsyncSocket) {.async.} =
     var host: AsyncSocket
     try:
         host = newAsyncSocket(buffered=false, domain=hostInfo.addrtype)
+        host.setSockOpt(OptReuseAddr, true)
+        host.setSockOpt(OptReusePort, true)
         await host.connect(maybeHost.get(), req.port)
     except OSError:
         # connection error host/port
@@ -151,6 +153,7 @@ proc processClient(client: AsyncSocket) {.async.} =
 proc serve() {.async.} =
     var server = newAsyncSocket(buffered=false, domain=AF_INET6)
     server.setSockOpt(OptReuseAddr, true)
+    server.setSockOpt(OptReusePort, true)
     server.bindAddr(Port(5001), "::")
     server.listen()
 
