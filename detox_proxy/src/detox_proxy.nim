@@ -28,7 +28,7 @@ proc safeClose(a: AsyncSocket, b: AsyncSocket) =
 
 
 proc safeClose(conn: Connection) =
-    echo "DISCONNECTED"
+    echo "disconnected"
     safeClose(conn.a, conn.b)
 
 
@@ -38,12 +38,14 @@ var connlist {.threadvar.}: seq[Connection]
 proc connwatch() {.async.} =
     const nodata_timelimit = 120 # 120s (from last recv/send)
 
+    var count = 0
     while true:
         var new_connlist: seq[Connection]
         let nowUnix = now().toTime.toUnix
         for i, conn in connlist:
             # timestamp check
-            if nowUnix - conn.last_timestamp > nodata_timelimit:
+            if (nowUnix - conn.last_timestamp) > nodata_timelimit:
+                echo "TIMEOUT"
                 safeClose(conn)
             elif conn.a.isClosed or conn.b.isClosed:
                 safeClose(conn)
@@ -51,16 +53,19 @@ proc connwatch() {.async.} =
                 new_connlist.add(conn)
 
         connlist = new_connlist
+        count += 1
+        await sleepAsync(10)
 
-        echo "===== CONNECTIONS ===="
-        echo connlist.len
-        await sleepAsync(300)
+        if count == 100:
+            echo "===== CONNECTIONS ===="
+            echo connlist.len
+            count = 0
 
 
 proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
     let conn = Connection(
         a: from_socket, b: to_socket,
-        last_timestamp: 0,
+        last_timestamp: now().toTime.toUnix,
     )
     connlist.add(conn)
     while true:
@@ -69,7 +74,7 @@ proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
             return
         
         try:
-            let data = await conn.a.recv(BufferSize)
+            let data = await conn.a.recv(1024)
             if data.len == 0:
                 safeClose(conn)
                 return
@@ -80,7 +85,7 @@ proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
             return
 
 proc processClient(client: AsyncSocket) {.async.} =
-    let data = await client.recv(BufferSize)
+    let data = await client.recv(1024)
     if data.len == 0:
         echo "LEN"
         return
@@ -95,29 +100,33 @@ proc processClient(client: AsyncSocket) {.async.} =
     let req = maybeReq.get()
 
     # connect to remote
-    let host = newAsyncSocket(buffered=false)
-
     let maybeHost = req.headers.getHeader("host")
     if maybeHost.isNone:
-        safeClose(client, host)
+        if not client.isClosed:
+            client.close()
         return
 
+    var hostInfo: Hostent
     try:
-        echo getHostByName(maybeHost.get())  # host check
+        hostInfo = getHostByName(maybeHost.get())  # host check
     except OSError:
         # wrong host/port
         echo "WRONG address/port"
         await client.send("HTTP/1.1 404 Not found\c\n\c\ndetox-proxy: address/port not found\c\n")
-        safeClose(host, client)
+        if not client.isClosed:
+            client.close()
         return
 
+    var host: AsyncSocket
     try:
+        host = newAsyncSocket(buffered=false, domain=hostInfo.addrtype)
         await host.connect(maybeHost.get(), req.port)
     except OSError:
         # connection error host/port
         echo "Connection refused"
         await client.send("HTTP/1.1 502 Bad gateway\c\n\c\ndetox-proxy: connection refused (can't connect to requested server)\c\n")
-        safeClose(host, client)
+        if not client.isClosed:
+            client.close()
         return
 
     echo "CONNECTED " & req.path & ":" & $req.port
@@ -128,7 +137,7 @@ proc processClient(client: AsyncSocket) {.async.} =
             safeClose(host, client)
             return
 
-        await client.send("HTTP/1.1 200 Connection established\c\n\c\n")
+        await client.send("HTTP/1.1 200 Connection ESTABLISHED\c\n\c\n")
     else:
         if host.isClosed or client.isClosed:
             safeClose(host, client)
