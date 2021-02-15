@@ -54,9 +54,9 @@ proc connwatch() {.async.} =
 
         connlist = new_connlist
         count += 1
-        await sleepAsync(10)
+        await sleepAsync(500)
 
-        if count == 100:
+        if count == 4:
             echo "===== CONNECTIONS ===="
             echo connlist.len
             count = 0
