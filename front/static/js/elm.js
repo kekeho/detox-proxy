@@ -10630,17 +10630,36 @@ var $author$project$Main$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
+var $elm$html$Html$header = _VirtualDom_node('header');
+var $author$project$View$headerView = A2(
+	$elm$html$Html$header,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('logo')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('detox-proxy')
+				]))
+		]));
+var $author$project$IndexPage$View$view = _List_Nil;
 var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
+				$author$project$View$headerView,
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Hello, World!')
-					]))
+						$elm$html$Html$Attributes$class('content')
+					]),
+				$author$project$IndexPage$View$view)
 			]),
 		title: 'detox-proxy'
 	};

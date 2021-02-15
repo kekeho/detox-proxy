@@ -1,10 +1,13 @@
 module Main exposing (Model, init, Msg, update, view, subscriptions)
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Browser
 import Browser.Navigation as Nav
 import Url
 
+import View
+import IndexPage.View
 
 main : Program () Model Msg
 main =
@@ -60,9 +63,8 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "detox-proxy"
     , body =
-        [ div []
-            [ text "Hello, World!" ]
-      ]
+        [ View.headerView
+        , div [ class "content" ]
+            IndexPage.View.view
+        ]
     }
-
-

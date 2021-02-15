@@ -1,0 +1,38 @@
+/**
+ * Copyright (c) 2021 Hiroki Takemura (kekeho)
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
+/* GLOBAL CSS */
+
+:root {
+    --key-color: #5d5ad6;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    height: 0;
+
+    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+
+header {
+    height: 3rem;
+    padding: .5rem 2rem;
+    display: flexbox;
+
+    border-bottom: solid 1px #838383;
+}
+
+header .logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--key-color);
+}
+
