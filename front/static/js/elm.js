@@ -10630,6 +10630,97 @@ var $author$project$Main$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
+var $elm$html$Html$footer = _VirtualDom_node('footer');
+var $author$project$View$footerView = A2(
+	$elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('logo')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('detox-proxy')
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('github')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('GitHub')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('https://github.com/kekeho/detox-proxy')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('kekeho/detox-proxy')
+						]))
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('contact')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('made by kekeho.'),
+					A2(
+					$elm$html$Html$ul,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$href('https://github.com/kekeho')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('@kekeho')
+										]))
+								])),
+							A2(
+							$elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$href('https://twitter.com/k3k3h0')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('@k3k3h0')
+										]))
+								]))
+						]))
+				]))
+		]));
 var $elm$html$Html$header = _VirtualDom_node('header');
 var $author$project$View$headerView = A2(
 	$elm$html$Html$header,
@@ -10684,7 +10775,8 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$Attributes$class('content indexpage')
 					]),
-				$author$project$IndexPage$View$view)
+				$author$project$IndexPage$View$view),
+				$author$project$View$footerView
 			]),
 		title: 'detox-proxy'
 	};

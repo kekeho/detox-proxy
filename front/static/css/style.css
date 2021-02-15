@@ -37,3 +37,26 @@ header .logo {
     color: var(--key-color);
 }
 
+.content {
+    min-height: 100vh;
+}
+
+
+footer {
+    width: calc(100% - 4rem);
+    padding: 2rem;
+    background-color: #e0e0e0;
+    display: flex;
+
+    justify-content: space-between;
+}
+
+footer .logo {
+    width: fit-content;
+    height: fit-content;
+    font-size: 2rem;
+    font-weight: 800;
+    background-color: var(--key-color);
+    color: #fff;
+    padding: .25rem .5rem;
+}
