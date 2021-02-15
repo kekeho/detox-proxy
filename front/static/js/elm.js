@@ -10647,7 +10647,32 @@ var $author$project$View$headerView = A2(
 					$elm$html$Html$text('detox-proxy')
 				]))
 		]));
-var $author$project$IndexPage$View$view = _List_Nil;
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$IndexPage$View$view = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('index-top')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src('/static/img/index-top-bg.svg')
+					]),
+				_List_Nil)
+			]))
+	]);
 var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
@@ -10657,7 +10682,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('content')
+						$elm$html$Html$Attributes$class('content indexpage')
 					]),
 				$author$project$IndexPage$View$view)
 			]),

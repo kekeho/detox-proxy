@@ -64,7 +64,7 @@ view model =
     { title = "detox-proxy"
     , body =
         [ View.headerView
-        , div [ class "content" ]
+        , div [ class "content indexpage" ]  -- TODO: router作ったらindexpageは動的に書き換え
             IndexPage.View.view
         ]
     }
