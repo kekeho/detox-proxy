@@ -21,4 +21,6 @@ COPY ./Pipfile /code
 COPY ./Pipfile.lock /code
 RUN python -m pipenv install
 
+COPY ./ ./
+
 CMD [ "python", "-m", "pipenv", "run", "start" ]

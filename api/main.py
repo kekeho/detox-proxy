@@ -32,7 +32,10 @@ async def index():
             'model': schema.User,
             'description': 'Successful Response (created)',
         },
+        status.HTTP_409_CONFLICT: {
+            'description': 'Email already registered',
+        }
     },
 )
-def create_user(u: schema.CreateUser):
+async def create_user(u: schema.CreateUser):
     return u.create()

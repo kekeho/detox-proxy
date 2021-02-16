@@ -50,6 +50,11 @@ class CreateUser(BaseModel):
 
     def create(self) -> User:
         with db.session_scope() as s:
+            exists = db.User.get_with_email(s, self.email)
+            if exists is not None:
+                raise HTTPException(status.HTTP_409_CONFLICT,
+                                    'Email already registered')
+
             u = db.User.create(self.username, self.email,
                                self.raw_password)
             s.add(u)
