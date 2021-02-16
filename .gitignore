@@ -1,2 +1,3 @@
 .vscode
 test
+.mypy_cache

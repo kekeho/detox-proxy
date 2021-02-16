@@ -11,3 +11,7 @@ www.{$HOSTNAME} {
 
     try_files {path} index.html
 }
+
+api.{$HOSTNAME} {
+    reverse_proxy api:8000
+}

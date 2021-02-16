@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+
+[dev-packages]
+autopep8 = "*"
+flake8 = "*"
+mypy = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+start = "uvicorn main:app --host 0.0.0.0"
+startdev = "uvicorn main:app --host 0.0.0.0 --reload"
