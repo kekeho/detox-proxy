@@ -1,0 +1,7 @@
+{$HOSTNAME} {
+    file_server
+    root * /public/
+    encode zstd gzip
+
+    try_files {path} index.html
+}

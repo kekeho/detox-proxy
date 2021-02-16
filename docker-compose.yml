@@ -1,0 +1,10 @@
+version: "3"
+services: 
+  caddy:
+    build: front
+    environment: 
+      TZ: "UTC"
+      HOSTNAME: "localhost"
+    ports:
+      - 80:80
+      - 443:443
