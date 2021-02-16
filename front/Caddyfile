@@ -1,4 +1,9 @@
 {$HOSTNAME} {
+    redir https://www.{$HOSTNAME}{uri}
+}
+
+
+www.{$HOSTNAME} {
     file_server
     root * /public/
     encode zstd gzip
