@@ -21,3 +21,19 @@ services:
     build: api
     volumes:
       - ./api:/code
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+
+  apidb:
+    image: postgres
+    environment: 
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+
+
+volumes:
+  pgdata:
+    driver: local 
