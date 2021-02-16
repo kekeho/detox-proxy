@@ -1,4 +1,4 @@
-module Main exposing (Model, init, Msg, update, view, subscriptions)
+module Main exposing (init)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -7,7 +7,10 @@ import Browser.Navigation as Nav
 import Url
 
 import View
+import Model exposing (..)
 import IndexPage.View
+import LoginPage.View
+import Url.Parser
 
 main : Program () Model Msg
 main =
@@ -18,12 +21,6 @@ main =
         , subscriptions = subscriptions
         , onUrlRequest = UrlRequested
         , onUrlChange = UrlChanged
-    }
-
-
-type alias Model =
-    { key : Nav.Key
-    , url : Url.Url
     }
 
 
@@ -61,11 +58,20 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
+    let
+        (c, v) =
+            case (Url.Parser.parse Model.routeParser model.url) of
+                Just IndexPage ->
+                    IndexPage.View.view
+                Just LoginPage ->
+                    LoginPage.View.view
+                Nothing ->
+                    View.notFoundView
+    in
     { title = "detox-proxy"
     , body =
         [ View.headerView
-        , div [ class "content indexpage" ]  -- TODO: router作ったらindexpageは動的に書き換え
-            IndexPage.View.view
+        , ( div [ class ("content " ++ c) ] v )
         , View.footerView
         ]
     }

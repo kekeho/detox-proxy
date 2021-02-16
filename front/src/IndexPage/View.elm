@@ -4,12 +4,15 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
-view: List (Html msg)
+view: (String, List (Html msg))
 view =
-    [ div [ class "index-top" ]
+    ( "indexpage"
+    , [ div [ class "index-top" ]
         [ img 
             [ src "/static/img/index-top-bg.svg" ]
             []
+        , div [ ] [ text "サービスの説明とか" ]
         ]
-    ]
+      ]
+    )
 

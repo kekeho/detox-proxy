@@ -31,6 +31,10 @@ header {
     border-bottom: solid 1px #838383;
 }
 
+header a {
+    text-decoration: none;
+}
+
 header .logo {
     font-size: 2rem;
     font-weight: 800;

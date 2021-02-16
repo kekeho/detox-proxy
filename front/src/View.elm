@@ -8,7 +8,10 @@ import Html.Attributes exposing (..)
 headerView: Html msg
 headerView =
     header []
-        [ div [ class "logo" ] [ text "detox-proxy" ]
+        [ a [ href "/" ]
+            [ div [ class "logo" ]
+                [ text "detox-proxy" ]
+            ]
         ]
 
 
@@ -32,3 +35,12 @@ footerView =
                 ]
             ]
         ]
+
+
+notFoundView: (String, List (Html msg))
+notFoundView =
+    ( "notfoundpage"
+    , [ div [ class "message" ]
+        [ text "404 not found" ]
+      ]
+    )
