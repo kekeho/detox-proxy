@@ -4,10 +4,13 @@ services:
     build: front
     environment: 
       TZ: "UTC"
-      HOSTNAME: "detoxproxy.com"
+      HOSTNAME: "localhost"
     ports:
-      - 80:80
-      - 443:443
+      - 8000:80
+      - 8001:443
+    volumes:
+      - ./front/Caddyfile:/code/Caddyfile
+      - ./front/public:/public
 
   proxy:
     build: detox_proxy
