@@ -4,7 +4,8 @@
 # https://opensource.org/licenses/MIT
 
 from pydantic import BaseModel
-from typing import List
+from fastapi import HTTPException, status
+from typing import List, Optional
 
 import db
 
@@ -61,3 +62,27 @@ class CreateUser(BaseModel):
             s.commit()
 
             return User.from_db(u)
+
+
+class LoginUser(BaseModel):
+    email: str
+    raw_password: str
+    remember: bool
+
+    def login(self) -> Optional[str]:
+        """Login
+
+        returns:
+            token: Optional[str]
+                success -> str
+                fail -> None
+        """
+        with db.session_scope() as s:
+            u: Optional[db.User] = db.User.get_with_email(s, self.email)
+            if u is None:
+                return None
+
+            if not u.login(self.raw_password):
+                return None
+
+            return db.Token.issue_token(u)

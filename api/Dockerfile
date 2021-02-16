@@ -5,8 +5,6 @@ RUN mkdir /code
 RUN mkdir /projectimage
 WORKDIR /code
 
-COPY ./ ./
-
 # Change user
 RUN useradd containeruser
 RUN chown -R containeruser ./
