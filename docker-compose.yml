@@ -13,9 +13,11 @@ services:
     build: detox_proxy
     ports:
       - 5001:5001
-  
+
   api:
     build: api
+    env_file:
+      - email.env
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す

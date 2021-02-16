@@ -1,5 +1,10 @@
 FROM python:3.9-slim-buster
 
+# Install GCC
+RUN apt update
+RUN apt install -y build-essential
+
+
 # Create dir
 RUN mkdir /code
 RUN mkdir /projectimage
@@ -16,7 +21,6 @@ USER containeruser
 # Install deps
 RUN pip install pipenv
 COPY ./Pipfile /code
-COPY ./Pipfile.lock /code
 RUN python -m pipenv install
 
 COPY ./ ./

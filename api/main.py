@@ -39,7 +39,9 @@ async def index():
     },
 )
 async def create_user(u: schema.CreateUser):
-    return u.create()
+    new_user = u.create()
+    await new_user.send_mail('Account created', 'yeah')
+    return new_user
 
 
 @app.post(

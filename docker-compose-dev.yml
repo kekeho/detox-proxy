@@ -18,9 +18,13 @@ services:
       - 5001:5001
   
   api:
-    build: api
+    build: 
+      context: api
+      dockerfile: DockerfileDev
     volumes:
       - ./api:/code
+    env_file: 
+      - email.env
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す

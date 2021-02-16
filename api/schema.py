@@ -7,7 +7,25 @@ from pydantic import BaseModel
 from fastapi import HTTPException, status
 from typing import List, Optional
 
+from pydantic.networks import EmailStr
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+
+import os
 import db
+
+
+email_config = ConnectionConfig(
+    MAIL_USERNAME=os.environ['MAIL_USERNAME'],
+    MAIL_PASSWORD=os.environ['MAIL_PASSWORD'],
+    MAIL_FROM=os.environ['MAIL_FROM'],
+    MAIL_PORT=int(os.environ['MAIL_PORT']),
+    MAIL_SERVER=os.environ['MAIL_SERVER'],
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=True,
+)
+
+fm = FastMail(email_config)
 
 
 class Block(BaseModel):
@@ -42,6 +60,15 @@ class User(BaseModel):
             email=db_user.email,
             blocklist=[Block.from_db(b) for b in db_user.blocklist]
         )
+
+    async def send_mail(self, subj: str, message: str):
+        msg = MessageSchema(
+            subject=subj,
+            recipients=[self.email],
+            body=message,
+        )
+
+        await fm.send_message(msg)
 
 
 class CreateUser(BaseModel):
