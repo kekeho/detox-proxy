@@ -154,7 +154,7 @@ proc serve() {.async.} =
     var server = newAsyncSocket(buffered=false, domain=AF_INET6)
     server.setSockOpt(OptReuseAddr, true)
     server.setSockOpt(OptReusePort, true)
-    server.bindAddr(Port(5001), "::")
+    server.bindAddr(Port(5001), "0.0.0.0")
     server.listen()
 
     while true:

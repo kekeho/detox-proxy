@@ -1,7 +1,8 @@
+# WEBSITE
+
 {$HOSTNAME} {
     redir https://www.{$HOSTNAME}{uri}
 }
-
 
 www.{$HOSTNAME} {
     file_server

@@ -8,3 +8,8 @@ services:
     ports:
       - 80:80
       - 443:443
+
+  proxy:
+    build: detox_proxy
+    ports:
+      - 5001:5001
