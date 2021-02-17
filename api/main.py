@@ -43,6 +43,39 @@ async def create_user(u: schema.CreateUser):
     return new_user
 
 
+@app.get(
+    '/user/activate/{token:str}',
+    description='Activate user',
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_200_OK: {
+            'description': 'Successful Response (user account activated)',
+        },
+        status.HTTP_400_BAD_REQUEST: {
+            'description': 'Verify token is missing'
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Invalid token'
+        },
+    },
+)
+async def activate_user(token: str):
+    with db.session_scope() as s:
+        v: Optional[db.CreateUserVerify] = db.CreateUserVerify.get(s, token)
+        if v is None:
+            raise HTTPException(status.HTTP_403_FORBIDDEN,
+                                "Invalid token")
+
+        # don't care is_active
+        u: Optional[db.User] = s.query(db.User).get(v.user)
+        if u is None:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
+        u.is_active = True
+        s.delete(v)
+
+    return Response(None, status.HTTP_200_OK)
+
+
 @app.post(
     '/user/login',
     description='login',

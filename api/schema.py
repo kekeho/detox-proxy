@@ -81,8 +81,8 @@ class CreateUser(BaseModel):
             s.add(db_u)
             s.commit()
 
-            verify_token = db.CreateUserVerify.issue(s, db_u)
-            await verify_token.send_email(s)
+            raw_verify_token = db.CreateUserVerify.issue(s, db_u)
+            await db.CreateUserVerify.send_email(s, raw_verify_token)
 
             u = User.from_db(db_u)
             return User.from_db(u)

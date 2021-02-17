@@ -66,7 +66,7 @@ class User(Base):
     hashed_password = Column('hashed_pass', String, nullable=False)
 
     blocklist = relationship('Block')
-    is_active = Column('is_active', Boolean, nullable=False, default=True)
+    is_active = Column('is_active', Boolean, nullable=False, default=False)
 
     @classmethod
     def create(cls, username: str, email: str, raw_password: str):
@@ -77,7 +77,7 @@ class User(Base):
             username=username,
             email=email,
             hashed_password=hashed_password.decode(),
-            is_active=True,
+            is_active=False,
         )
 
     @classmethod
@@ -232,7 +232,7 @@ class CreateUserVerify(Base):
     limit = datetime.timedelta(hours=1)
 
     @classmethod
-    def issue(cls, s: scoped_session, user: User):
+    def issue(cls, s: scoped_session, user: User) -> str:
         """Issue verify token
 
         params
@@ -242,20 +242,61 @@ class CreateUserVerify(Base):
 
         returns
         -------
-            verify token: CreateUserVerify instance
+            verify token: raw token
         """
-        v = cls(token=str(uuid.uuid4()), user=user.id,
+        token_salt = bcrypt.gensalt(rounds=4, prefix=b'2b')
+        raw_token = str(uuid.uuid4()) + f'@{user.id}'
+        hashed_token = bcrypt.hashpw(raw_token.encode('utf-8'), token_salt)
+
+        v = cls(token=hashed_token.decode(), user=user.id,
                 created_at=datetime.datetime.now())
         s.add(v)
         s.commit()
 
+        return raw_token
+
+    @classmethod
+    def get(cls, s: scoped_session, raw_token: str) -> Optional[Any]:
+        """Get CreateUserVerify instance with token
+
+        params
+        ------
+            s: scoped_session
+            token: str
+
+        returns
+        -------
+            v: Optional[CreateUserVerify]
+        """
+        try:
+            raw_token, userid = raw_token.split('@')
+        except ValueError:
+            return None
+
+        v = s.query(cls).filter(
+            cls.user == userid
+        ).all()
+        if len(v) != 1:
+            return None
+        v = v[0]
+        if v is None:
+            return None
+
+        if v.is_active is False:
+            return None
+
         return v
 
-    async def send_email(self, s: scoped_session):
+    @staticmethod
+    async def send_email(s: scoped_session, raw_token):
         hostname = os.environ['DETOX_PROXY_HOST']
         https_port = os.environ['DETOX_PROXY_PORT']
 
-        user: Optional[User] = User.get(s, self.user)
+        v = CreateUserVerify.get(s, raw_token)
+        if v is None:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        user = s.query(User).get(v.user)  # don't care is_active
         if user is None:
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -267,7 +308,7 @@ class CreateUserVerify(Base):
 <br/>
 手続きを完了させるために、以下のリンクを1時間以内にクリックしてください。<br/>
 <br/>
-<a href="https://api.{hostname}:{https_port}/activate/{self.token}">
+<a href="https://api.{hostname}:{https_port}/user/activate/{raw_token}">
     アカウントの有効化
 </a>
 """,
