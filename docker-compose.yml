@@ -4,7 +4,7 @@ services:
     build: front
     environment: 
       TZ: "UTC"
-      HOSTNAME: "detoxproxy.com"
+      HOSTNAME: ${DETOX_PROXY_HOST}
     ports:
       - 80:80
       - 443:443
@@ -27,6 +27,8 @@ services:
     environment: 
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+      DETOX_PROXY_HOST: ${DETOX_PROXY_HOST}
+      DETOX_PROXY_PORT: ${DETOX_PROXY_PORT}
     volumes:
       - "pgdata:/var/lib/postgresql/data"
 

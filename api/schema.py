@@ -7,25 +7,10 @@ from pydantic import BaseModel
 from fastapi import HTTPException, status
 from typing import List, Optional
 
-from pydantic.networks import EmailStr
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+import email_util
+from fastapi_mail import MessageSchema
 
-import os
 import db
-
-
-email_config = ConnectionConfig(
-    MAIL_USERNAME=os.environ['MAIL_USERNAME'],
-    MAIL_PASSWORD=os.environ['MAIL_PASSWORD'],
-    MAIL_FROM=os.environ['MAIL_FROM'],
-    MAIL_PORT=int(os.environ['MAIL_PORT']),
-    MAIL_SERVER=os.environ['MAIL_SERVER'],
-    MAIL_TLS=True,
-    MAIL_SSL=False,
-    USE_CREDENTIALS=True,
-)
-
-fm = FastMail(email_config)
 
 
 class Block(BaseModel):
@@ -68,7 +53,7 @@ class User(BaseModel):
             body=message,
         )
 
-        await fm.send_message(msg)
+        await email_util.fm.send_message(msg)
 
 
 class CreateUser(BaseModel):
@@ -76,18 +61,30 @@ class CreateUser(BaseModel):
     email: str
     raw_password: str
 
-    def create(self) -> User:
+    async def create(self, send_mail: bool = True) -> User:
+        """Create User
+
+        params
+        ------
+            send_mail:
+                if send verify email, muse be True
+                (default: True)
+        """
         with db.session_scope() as s:
             exists = db.User.get_with_email(s, self.email)
             if exists is not None:
                 raise HTTPException(status.HTTP_409_CONFLICT,
                                     'Email already registered')
 
-            u = db.User.create(self.username, self.email,
-                               self.raw_password)
-            s.add(u)
+            db_u = db.User.create(self.username, self.email,
+                                  self.raw_password)
+            s.add(db_u)
             s.commit()
 
+            verify_token = db.CreateUserVerify.issue(s, db_u)
+            await verify_token.send_email(s)
+
+            u = User.from_db(db_u)
             return User.from_db(u)
 
 

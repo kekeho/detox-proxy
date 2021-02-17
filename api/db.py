@@ -9,8 +9,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-import bcrypt
+from sqlalchemy.sql.sqltypes import DateTime
+from fastapi import HTTPException, status
 
+import email_util
+from fastapi_mail import MessageSchema
+
+import bcrypt
+import datetime
 import os
 import uuid
 from typing import Any
@@ -73,6 +79,30 @@ class User(Base):
             hashed_password=hashed_password.decode(),
             is_active=True,
         )
+
+    @classmethod
+    def get(cls, s: scoped_session, id: int) -> Optional[Any]:
+        """Get user with id
+
+        params
+        ------
+            s: scoped_session
+            id: user id
+
+        returns
+        -------
+            user: Optional[User]
+                user exists -> User
+                user not found -> None
+        """
+        u = s.query(cls).get(id)
+        if u is None:
+            return None
+
+        if u.is_active is False:
+            return None
+
+        return u
 
     @classmethod
     def get_with_email(cls, s: scoped_session, email: str):
@@ -190,3 +220,65 @@ class Block(Base):
     start = Column('start', Integer, nullable=False)  # sec
     end = Column('end', Integer, nullable=False)  # sec
     active = Column('active', Boolean, nullable=False, default=True)
+
+
+class CreateUserVerify(Base):
+    __tablename__ = 'create_user_veryfi'
+    token = Column('token', String, primary_key=True)  # uuid
+    user = Column('user_id', ForeignKey('user.id'), nullable=False)
+    created_at = Column('created_at', DateTime, nullable=False,
+                        default=datetime.datetime.now)
+
+    limit = datetime.timedelta(hours=1)
+
+    @classmethod
+    def issue(cls, s: scoped_session, user: User):
+        """Issue verify token
+
+        params
+        ------
+            s: scoped_session
+            user: User instance
+
+        returns
+        -------
+            verify token: CreateUserVerify instance
+        """
+        v = cls(token=str(uuid.uuid4()), user=user.id,
+                created_at=datetime.datetime.now())
+        s.add(v)
+        s.commit()
+
+        return v
+
+    async def send_email(self, s: scoped_session):
+        hostname = os.environ['DETOX_PROXY_HOST']
+        https_port = os.environ['DETOX_PROXY_PORT']
+
+        user: Optional[User] = User.get(s, self.user)
+        if user is None:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        msg = MessageSchema(
+            subject="detox-proxy アカウント登録の手続き",
+            recipients=[user.email],
+            body=f"""detox-proxyへようこそ! <br/>
+アカウント登録のお手続きをいただき、誠にありがとうございます。<br/>
+<br/>
+手続きを完了させるために、以下のリンクを1時間以内にクリックしてください。<br/>
+<br/>
+<a href="https://api.{hostname}:{https_port}/activate/{self.token}">
+    アカウントの有効化
+</a>
+""",
+            subtype='html'
+        )
+
+        await email_util.fm.send_message(msg)
+
+    def is_active(self) -> bool:
+        now = datetime.datetime.now()
+        if now - self.created_at < self.limit:
+            return True
+
+        return False

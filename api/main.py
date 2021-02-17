@@ -39,8 +39,7 @@ async def index():
     },
 )
 async def create_user(u: schema.CreateUser):
-    new_user = u.create()
-    await new_user.send_mail('Account created', 'yeah')
+    new_user = await u.create()
     return new_user
 
 

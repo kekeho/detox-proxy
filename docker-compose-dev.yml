@@ -28,6 +28,8 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+      DETOX_PROXY_HOST: "localhost"
+      DETOX_PROXY_PORT: "8001"
 
   apidb:
     image: postgres
