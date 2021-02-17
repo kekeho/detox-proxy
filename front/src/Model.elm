@@ -15,6 +15,7 @@ type alias Model =
 type Route
     = IndexPage
     | LoginPage
+    | RegistPage
 
 
 
@@ -25,4 +26,5 @@ routeParser =
     Url.Parser.oneOf
         [ Url.Parser.map IndexPage Url.Parser.top
         , Url.Parser.map LoginPage (Url.Parser.s "login")
+        , Url.Parser.map RegistPage (Url.Parser.s "regist")
         ]

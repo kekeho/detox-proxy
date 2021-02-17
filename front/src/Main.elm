@@ -10,6 +10,7 @@ import View
 import Model exposing (..)
 import IndexPage.View
 import LoginPage.View
+import RegistPage.View
 import Url.Parser
 
 main : Program () Model Msg
@@ -65,6 +66,8 @@ view model =
                     IndexPage.View.view
                 Just LoginPage ->
                     LoginPage.View.view
+                Just RegistPage ->
+                    RegistPage.View.view
                 Nothing ->
                     View.notFoundView
     in
