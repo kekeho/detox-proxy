@@ -14,18 +14,18 @@ import db
 db.Base.metadata.create_all(bind=db.engine)
 
 app = FastAPI(
-    docs_url='/docs',
-    openapi_url='/openapi.json',
+    docs_url='/api/docs',
+    openapi_url='/api/openapi.json',
 )
 
 
-@app.get('/')
+@app.get('/api')
 async def index():
     return {'message': 'Hello, detox-proxy!'}
 
 
 @app.post(
-    '/user',
+    '/api/user',
     description='Create user',
     status_code=status.HTTP_201_CREATED,
     responses={
@@ -44,7 +44,7 @@ async def create_user(u: schema.CreateUser):
 
 
 @app.get(
-    '/user/activate/{token:str}',
+    '/api/user/activate/{token:str}',
     description='Activate user',
     status_code=status.HTTP_200_OK,
     responses={
@@ -77,7 +77,7 @@ async def activate_user(token: str):
 
 
 @app.post(
-    '/user/login',
+    '/api/user/login',
     description='login',
     status_code=status.HTTP_201_CREATED,
     responses={

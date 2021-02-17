@@ -5,13 +5,16 @@
 }
 
 www.{$HOSTNAME} {
-    file_server
-    root * /public/
     encode zstd gzip
+    route /api/* {
+        reverse_proxy api:8000
+    }
 
-    try_files {path} index.html
-}
+    route /* {
+        root * /public/
 
-api.{$HOSTNAME} {
-    reverse_proxy api:8000
+        try_files {path} index.html
+
+        file_server
+    }
 }
