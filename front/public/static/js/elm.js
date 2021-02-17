@@ -11248,6 +11248,15 @@ var $elm$html$Html$Events$onCheck = function (tagger) {
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
 };
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$required = $elm$html$Html$Attributes$boolProperty('required');
 var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $author$project$RegistPage$View$confirmTeamOfServiceView = function (nowValue) {
 	var valueStr = nowValue ? 'true' : 'false';
@@ -11266,6 +11275,7 @@ var $author$project$RegistPage$View$confirmTeamOfServiceView = function (nowValu
 						$elm$html$Html$Attributes$type_('checkbox'),
 						$elm$html$Html$Attributes$id('teamofservice'),
 						$elm$html$Html$Attributes$value(valueStr),
+						$elm$html$Html$Attributes$required(true),
 						$elm$html$Html$Events$onCheck(
 						function (x) {
 							return $author$project$RegistPage$RegistPage$FormInput(
@@ -11319,8 +11329,8 @@ var $elm$html$Html$Events$onSubmit = function (msg) {
 			$elm$html$Html$Events$alwaysPreventDefault,
 			$elm$json$Json$Decode$succeed(msg)));
 };
-var $author$project$RegistPage$View$registFieldView = F5(
-	function (formId, formType, labelStr, val, attr) {
+var $author$project$RegistPage$View$registFieldView = F6(
+	function (formId, formType, labelStr, req, val, attr) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -11345,6 +11355,7 @@ var $author$project$RegistPage$View$registFieldView = F5(
 						[
 							$elm$html$Html$Attributes$type_(formType),
 							$elm$html$Html$Attributes$id(formId),
+							$elm$html$Html$Attributes$required(req),
 							$elm$html$Html$Attributes$value(val),
 							attr
 						]),
@@ -11376,33 +11387,36 @@ var $author$project$RegistPage$View$registFormView = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A5(
+						A6(
 						$author$project$RegistPage$View$registFieldView,
 						'username',
 						'text',
 						'ユーザー名',
+						true,
 						model.username,
 						$elm$html$Html$Events$onInput(
 							function (s) {
 								return $author$project$RegistPage$RegistPage$FormInput(
 									$author$project$RegistPage$RegistPage$UserName(s));
 							})),
-						A5(
+						A6(
 						$author$project$RegistPage$View$registFieldView,
 						'email',
 						'email',
 						'メールアドレス',
+						true,
 						model.email,
 						$elm$html$Html$Events$onInput(
 							function (s) {
 								return $author$project$RegistPage$RegistPage$FormInput(
 									$author$project$RegistPage$RegistPage$Email(s));
 							})),
-						A5(
+						A6(
 						$author$project$RegistPage$View$registFieldView,
 						'password',
 						'password',
 						'パスワード',
+						true,
 						model.password,
 						$elm$html$Html$Events$onInput(
 							function (s) {

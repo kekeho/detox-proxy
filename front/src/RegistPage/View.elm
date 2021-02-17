@@ -24,11 +24,14 @@ registFormView model =
     div [ class "regist-panel" ]
         [ h1 [] [ text "ユーザー登録" ]
         , Html.form [ onSubmit <| FormInput SubmitForm ]
-            [ registFieldView "username" "text" "ユーザー名" model.username
+            [ registFieldView "username" "text" "ユーザー名" 
+                True model.username
                 (onInput <| (\s -> FormInput (UserName s)))
-            , registFieldView "email" "email" "メールアドレス" model.email
+            , registFieldView "email" "email" "メールアドレス"
+                True model.email
                 (onInput <| (\s -> FormInput (Email s)))
-            , registFieldView "password" "password" "パスワード" model.password
+            , registFieldView "password" "password" "パスワード"
+                True model.password
                 (onInput <| (\s -> FormInput (Password s)))
             , confirmTeamOfServiceView model.teamOfServiceAccept
             , input [ type_ "submit", value "登録" ] [] 
@@ -36,11 +39,11 @@ registFormView model =
         ]
 
 
-registFieldView : String -> String -> String -> String -> Attribute msg -> Html msg
-registFieldView formId formType labelStr val attr =
+registFieldView : String -> String -> String -> Bool -> String -> Attribute msg -> Html msg
+registFieldView formId formType labelStr req val attr =
     div [ class "form-column" ]
         [ label [ for formId ] [ text labelStr ]
-        , input [ type_ formType, id formId, value val , attr ] []
+        , input [ type_ formType, id formId, required req, value val,attr ] []
         ]
 
 
@@ -78,6 +81,7 @@ confirmTeamOfServiceView nowValue =
     p [ class "team-of-service" ] 
         [ input
             [ type_ "checkbox", id "teamofservice", value valueStr
+            , required True
             , onCheck (\x -> FormInput (TeamOfService x))
             ]
             [ ]
