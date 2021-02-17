@@ -1,6 +1,8 @@
 module RegistPage.RegistPage exposing (..)
 
-import RegistPage.Model exposing (RegistPageModel, initModel)
+import Http
+import RegistPage.Model exposing (..)
+import UserPage.Model exposing (..)
 
 
 
@@ -14,6 +16,7 @@ type InputEvent
 
 type RegistPageMsg
     = FormInput InputEvent
+    | GotRegistStatus (Result Http.Error User)
 
 
 update : RegistPageMsg -> RegistPageModel -> (RegistPageModel, Cmd RegistPageMsg)
@@ -43,5 +46,21 @@ update msg model =
                 
                 SubmitForm ->
                     ( initModel
-                    , Cmd.none
+                    , createUserRequest model
                     )
+
+        GotRegistStatus result ->
+            ( { model | result = Just result }
+            , Cmd.none
+            )
+
+
+-- CMD
+
+createUserRequest : RegistPageModel -> Cmd RegistPageMsg
+createUserRequest model =
+    Http.post
+        { url = "/api/user"
+        , body = Http.jsonBody <| registModelEncoder model
+        , expect = Http.expectJson GotRegistStatus userDecoder
+        }
