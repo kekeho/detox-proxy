@@ -11,31 +11,44 @@ import RegistPage.Model exposing (RegistPageModel)
 view: RegistPageModel -> (String, List (Html RegistPageMsg))
 view model =
     ( "registpage"
-    , [ introductionView
-      , div [ class "regist" ]
-        [ registFormView model
-        ]
-      ]
+    , registView model
     )
+
+
+registView : RegistPageModel -> List (Html RegistPageMsg)
+registView model =
+    [ introductionView
+    , div [ class "regist" ]
+        [ registPanelView model ]
+    ]
+
+
+registPanelView : RegistPageModel -> Html RegistPageMsg
+registPanelView model =
+    div [ class "regist-panel" ]
+        [ h1 [] [ text "ユーザー登録" ]
+        , case model.result of
+            Just (Ok _) ->
+                registeredView model
+            _ ->
+                registFormView model
+        ]
 
 
 registFormView : RegistPageModel -> Html RegistPageMsg
 registFormView model =
-    div [ class "regist-panel" ]
-        [ h1 [] [ text "ユーザー登録" ]
-        , Html.form [ onSubmit <| FormInput SubmitForm ]
-            [ registFieldView "username" "text" "ユーザー名" 
-                True model.username
-                (onInput <| (\s -> FormInput (UserName s)))
-            , registFieldView "email" "email" "メールアドレス"
-                True model.email
-                (onInput <| (\s -> FormInput (Email s)))
-            , registFieldView "password" "password" "パスワード"
-                True model.password
-                (onInput <| (\s -> FormInput (Password s)))
-            , confirmTeamOfServiceView model.teamOfServiceAccept
-            , input [ type_ "submit", value "登録" ] [] 
-            ]
+    Html.form [ onSubmit <| FormInput SubmitForm ]
+        [ registFieldView "username" "text" "ユーザー名" 
+            True model.username
+            (onInput <| (\s -> FormInput (UserName s)))
+        , registFieldView "email" "email" "メールアドレス"
+            True model.email
+            (onInput <| (\s -> FormInput (Email s)))
+        , registFieldView "password" "password" "パスワード"
+            True model.password
+            (onInput <| (\s -> FormInput (Password s)))
+        , confirmTeamOfServiceView model.teamOfServiceAccept
+        , input [ type_ "submit", value "登録" ] [] 
         ]
 
 
@@ -89,4 +102,17 @@ confirmTeamOfServiceView nowValue =
             [ a [ href "/docs/teamofservice", target "_blank" ]  [ text "利用規約" ]
             , text "に同意"
             ]
+        ]
+
+
+registeredView : RegistPageModel -> Html RegistPageMsg
+registeredView model =
+    div [ class "registered" ]
+        [ h2 [ ]
+            [ text "仮登録が完了しました👍" ]
+        , p [] [ text "最後のステップです!" ]
+        , p []
+            [ text "メールアドレスに、認証用のリンクを送信しました。リンクをクリックして、アカウントを有効化してください。" ]
+        , p []
+            [ text "メールが届いていない場合は、迷惑フォルダを確認してみてください。" ]
         ]

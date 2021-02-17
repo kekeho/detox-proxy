@@ -45,14 +45,20 @@ update msg model =
                     )
                 
                 SubmitForm ->
-                    ( initModel
+                    ( model
                     , createUserRequest model
                     )
 
         GotRegistStatus result ->
-            ( { model | result = Just result }
-            , Cmd.none
-            )
+            case result of
+                Ok _ ->
+                    ( { initModel | result = Just result }
+                    , Cmd.none
+                    )
+                Err _ ->
+                    ( { model | result = Just result }
+                    , Cmd.none
+                    )
 
 
 -- CMD

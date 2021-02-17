@@ -11150,18 +11150,28 @@ var $author$project$RegistPage$RegistPage$update = F2(
 						$elm$core$Platform$Cmd$none);
 				default:
 					return _Utils_Tuple2(
-						$author$project$RegistPage$Model$initModel,
+						model,
 						$author$project$RegistPage$RegistPage$createUserRequest(model));
 			}
 		} else {
 			var result = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						result: $elm$core$Maybe$Just(result)
-					}),
-				$elm$core$Platform$Cmd$none);
+			if (result.$ === 'Ok') {
+				return _Utils_Tuple2(
+					_Utils_update(
+						$author$project$RegistPage$Model$initModel,
+						{
+							result: $elm$core$Maybe$Just(result)
+						}),
+					$elm$core$Platform$Cmd$none);
+			} else {
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							result: $elm$core$Maybe$Just(result)
+						}),
+					$elm$core$Platform$Cmd$none);
+			}
 		}
 	});
 var $author$project$Main$update = F2(
@@ -11859,6 +11869,102 @@ var $author$project$RegistPage$View$registFieldView = F6(
 	});
 var $author$project$RegistPage$View$registFormView = function (model) {
 	return A2(
+		$elm$html$Html$form,
+		_List_fromArray(
+			[
+				$elm$html$Html$Events$onSubmit(
+				$author$project$RegistPage$RegistPage$FormInput($author$project$RegistPage$RegistPage$SubmitForm))
+			]),
+		_List_fromArray(
+			[
+				A6(
+				$author$project$RegistPage$View$registFieldView,
+				'username',
+				'text',
+				'ユーザー名',
+				true,
+				model.username,
+				$elm$html$Html$Events$onInput(
+					function (s) {
+						return $author$project$RegistPage$RegistPage$FormInput(
+							$author$project$RegistPage$RegistPage$UserName(s));
+					})),
+				A6(
+				$author$project$RegistPage$View$registFieldView,
+				'email',
+				'email',
+				'メールアドレス',
+				true,
+				model.email,
+				$elm$html$Html$Events$onInput(
+					function (s) {
+						return $author$project$RegistPage$RegistPage$FormInput(
+							$author$project$RegistPage$RegistPage$Email(s));
+					})),
+				A6(
+				$author$project$RegistPage$View$registFieldView,
+				'password',
+				'password',
+				'パスワード',
+				true,
+				model.password,
+				$elm$html$Html$Events$onInput(
+					function (s) {
+						return $author$project$RegistPage$RegistPage$FormInput(
+							$author$project$RegistPage$RegistPage$Password(s));
+					})),
+				$author$project$RegistPage$View$confirmTeamOfServiceView(model.teamOfServiceAccept),
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('submit'),
+						$elm$html$Html$Attributes$value('登録')
+					]),
+				_List_Nil)
+			]));
+};
+var $author$project$RegistPage$View$registeredView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('registered')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h2,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('仮登録が完了しました👍')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('最後のステップです!')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('メールアドレスに、認証用のリンクを送信しました。リンクをクリックして、アカウントを有効化してください。')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('メールが届いていない場合は、迷惑フォルダを確認してみてください。')
+					]))
+			]));
+};
+var $author$project$RegistPage$View$registPanelView = function (model) {
+	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
@@ -11873,80 +11979,36 @@ var $author$project$RegistPage$View$registFormView = function (model) {
 					[
 						$elm$html$Html$text('ユーザー登録')
 					])),
-				A2(
-				$elm$html$Html$form,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onSubmit(
-						$author$project$RegistPage$RegistPage$FormInput($author$project$RegistPage$RegistPage$SubmitForm))
-					]),
-				_List_fromArray(
-					[
-						A6(
-						$author$project$RegistPage$View$registFieldView,
-						'username',
-						'text',
-						'ユーザー名',
-						true,
-						model.username,
-						$elm$html$Html$Events$onInput(
-							function (s) {
-								return $author$project$RegistPage$RegistPage$FormInput(
-									$author$project$RegistPage$RegistPage$UserName(s));
-							})),
-						A6(
-						$author$project$RegistPage$View$registFieldView,
-						'email',
-						'email',
-						'メールアドレス',
-						true,
-						model.email,
-						$elm$html$Html$Events$onInput(
-							function (s) {
-								return $author$project$RegistPage$RegistPage$FormInput(
-									$author$project$RegistPage$RegistPage$Email(s));
-							})),
-						A6(
-						$author$project$RegistPage$View$registFieldView,
-						'password',
-						'password',
-						'パスワード',
-						true,
-						model.password,
-						$elm$html$Html$Events$onInput(
-							function (s) {
-								return $author$project$RegistPage$RegistPage$FormInput(
-									$author$project$RegistPage$RegistPage$Password(s));
-							})),
-						$author$project$RegistPage$View$confirmTeamOfServiceView(model.teamOfServiceAccept),
-						A2(
-						$elm$html$Html$input,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$type_('submit'),
-								$elm$html$Html$Attributes$value('登録')
-							]),
-						_List_Nil)
-					]))
+				function () {
+				var _v0 = model.result;
+				if ((_v0.$ === 'Just') && (_v0.a.$ === 'Ok')) {
+					return $author$project$RegistPage$View$registeredView(model);
+				} else {
+					return $author$project$RegistPage$View$registFormView(model);
+				}
+			}()
 			]));
+};
+var $author$project$RegistPage$View$registView = function (model) {
+	return _List_fromArray(
+		[
+			$author$project$RegistPage$View$introductionView,
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('regist')
+				]),
+			_List_fromArray(
+				[
+					$author$project$RegistPage$View$registPanelView(model)
+				]))
+		]);
 };
 var $author$project$RegistPage$View$view = function (model) {
 	return _Utils_Tuple2(
 		'registpage',
-		_List_fromArray(
-			[
-				$author$project$RegistPage$View$introductionView,
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('regist')
-					]),
-				_List_fromArray(
-					[
-						$author$project$RegistPage$View$registFormView(model)
-					]))
-			]));
+		$author$project$RegistPage$View$registView(model));
 };
 var $author$project$Main$view = function (model) {
 	var _v0 = function () {

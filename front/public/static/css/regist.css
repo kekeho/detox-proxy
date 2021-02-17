@@ -122,3 +122,7 @@
 .content.registpage .introduction .intro-section p {
     margin: .5rem 0;
 }
+
+.content.registpage .regist .registered {
+    margin: 0 1rem;
+}
