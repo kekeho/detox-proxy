@@ -11089,6 +11089,88 @@ var $author$project$LoginPage$View$view = _Utils_Tuple2(
 					$elm$html$Html$text('login')
 				]))
 		]));
+var $elm$html$Html$form = _VirtualDom_node('form');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $author$project$RegistPage$View$registFieldView = F3(
+	function (formId, formType, labelStr) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('form-column')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$label,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$for(formId)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(labelStr)
+						])),
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_(formType),
+							$elm$html$Html$Attributes$id(formId)
+						]),
+					_List_Nil)
+				]));
+	});
+var $author$project$RegistPage$View$registFormView = function () {
+	var formColList = _List_fromArray(
+		[
+			_Utils_Tuple3('username', 'text', 'ユーザー名'),
+			_Utils_Tuple3('email', 'email', 'メールアドレス'),
+			_Utils_Tuple3('password', 'password', 'パスワード')
+		]);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('regist-panel')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h1,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('ユーザー登録')
+					])),
+				A2(
+				$elm$html$Html$form,
+				_List_Nil,
+				_Utils_ap(
+					A2(
+						$elm$core$List$map,
+						function (_v0) {
+							var i = _v0.a;
+							var t = _v0.b;
+							var l = _v0.c;
+							return A3($author$project$RegistPage$View$registFieldView, i, t, l);
+						},
+						formColList),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('submit'),
+									$elm$html$Html$Attributes$value('登録')
+								]),
+							_List_Nil)
+						])))
+			]));
+}();
 var $author$project$RegistPage$View$view = _Utils_Tuple2(
 	'registpage',
 	_List_fromArray(
@@ -11097,12 +11179,20 @@ var $author$project$RegistPage$View$view = _Utils_Tuple2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('regist')
+					$elm$html$Html$Attributes$class('introduction')
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text('regist')
-				]))
+					$elm$html$Html$text('introduction')
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('regist')
+				]),
+			_List_fromArray(
+				[$author$project$RegistPage$View$registFormView]))
 		]));
 var $author$project$Main$view = function (model) {
 	var _v0 = function () {

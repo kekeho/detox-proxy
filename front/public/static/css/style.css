@@ -8,8 +8,9 @@
 /* GLOBAL CSS */
 
 :root {
-    --key-color: #5d5ad6;
+    --key-color: #4946f1;
     --font-color: #0c0c0c;
+    --bg-color: #f1f1f1;
     --header-height: 4rem;
 }
 
@@ -20,6 +21,8 @@ body {
 
     font-family: 'Noto Sans', sans-serif;
     font-family: 'Noto Sans JP', sans-serif;
+
+    background-color: var(--bg-color);
 
     color: var(--font-color);
 }
@@ -74,7 +77,7 @@ header .nav {
 
 header .nav a {
     text-decoration: none;
-    color: var(--font-color) !important;
+    color: var(--font-color);
     font-weight: 500;
 }
 
@@ -84,7 +87,7 @@ header .nav .regist {
     font-weight: 700;
 
     color: #fff;
-    border-radius: 2rem;
+    border-radius: .8rem;
     background-color: var(--key-color);
 }
 
