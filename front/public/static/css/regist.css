@@ -102,6 +102,7 @@
 .content.registpage .introduction {
     width: min-content;
     min-width: 20rem;
+    max-width: 45rem;
     flex-grow: 2;
 
     padding: 0 2rem;
