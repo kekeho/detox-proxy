@@ -25,6 +25,9 @@ body {
     background-color: var(--bg-color);
 
     color: var(--font-color);
+
+    word-wrap: break-word;
+    word-break: keep-all;
 }
 
 

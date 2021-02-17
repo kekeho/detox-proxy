@@ -11089,8 +11089,77 @@ var $author$project$LoginPage$View$view = _Utils_Tuple2(
 					$elm$html$Html$text('login')
 				]))
 		]));
-var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $author$project$RegistPage$View$introductionSection = F2(
+	function (sectionTitle, contents) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('intro-section')
+				]),
+			A2(
+				$elm$core$List$cons,
+				A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(sectionTitle)
+						])),
+				contents));
+	});
+var $author$project$RegistPage$View$introductionView = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('introduction')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$h1,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('バランスの取れた デジタルライフへ')
+				])),
+			A2(
+			$author$project$RegistPage$View$introductionSection,
+			'登録は簡単',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('フォームに情報を入力して登録ボタンを押したら、メールで認証するだけ。')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('すぐにアクセス制御を設定して、数分後には健康的な生活を送ることができるようになります。')
+						]))
+				])),
+			A2(
+			$author$project$RegistPage$View$introductionSection,
+			'ユーザーのプライバシーを保護',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('detox-proxyを使えば、接続先のWEBサービスに対し、ユーザーのIPアドレスなどの個人情報を隠すことができます。')
+						]))
+				]))
+		]));
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $author$project$RegistPage$View$registFieldView = F3(
@@ -11175,16 +11244,7 @@ var $author$project$RegistPage$View$view = _Utils_Tuple2(
 	'registpage',
 	_List_fromArray(
 		[
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('introduction')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('introduction')
-				])),
+			$author$project$RegistPage$View$introductionView,
 			A2(
 			$elm$html$Html$div,
 			_List_fromArray(
