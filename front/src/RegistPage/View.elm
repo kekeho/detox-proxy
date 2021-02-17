@@ -29,7 +29,9 @@ registFormView =
         
         , Html.form [ ]
             ( List.map (\(i, t, l) -> registFieldView i t l) formColList
-            ++ [ input [ type_ "submit", value "登録" ] [] ]
+            ++ [ confirmTeamOfServiceView
+               , input [ type_ "submit", value "登録" ] [] 
+               ]
             )
         ]
 
@@ -51,7 +53,7 @@ introductionView =
             [ p []
                 [ text "フォームに情報を入力して登録ボタンを押したら、メールで認証するだけ。" ]
             , p []
-                [ text "すぐにアクセス制御を設定して、数分後には健康的な生活を送ることができるようになります。" ]
+                [ text "すぐにアクセス制御を設定して、数分後には健康的な生活への第一歩を踏み出すことができます。" ]
             ]
         , introductionSection "ユーザーのプライバシーを保護"
             [ p []
@@ -64,3 +66,14 @@ introductionSection : String -> List (Html msg) -> Html msg
 introductionSection sectionTitle contents =
     div [ class "intro-section" ]
         (h2 [] [ text sectionTitle ] :: contents)
+
+
+confirmTeamOfServiceView : Html msg
+confirmTeamOfServiceView =
+    p [ class "team-of-service" ] 
+        [ input [ type_ "checkbox", id "teamofservice" ] [ ]
+        , label [ for "teamofservice" ] 
+            [ a [ href "/docs/teamofservice", target "_blank" ]  [ text "利用規約" ]
+            , text "に同意"
+            ]
+        ]

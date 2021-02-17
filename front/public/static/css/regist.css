@@ -2,6 +2,7 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap-reverse;
+    align-content: flex-end;
 }
 
 
@@ -17,6 +18,7 @@
     width: min-content;
     min-width: 18rem;
     max-width: 25rem;
+    height: max-content;
     flex-grow: 1;
 }
 
@@ -71,7 +73,7 @@
 .content.registpage .regist .form-column input {
     display: block;
     width: 100%;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     border: none;
     padding: 0;
     background-color: var(--bg-color);
@@ -85,6 +87,13 @@
     color: #ffffff;
     width: 5rem;
     font-size: 1.2rem;
+
+    display: inline;
+}
+
+.content.registpage .regist .team-of-service {
+    width: max-content;
+    display: inline;
 }
 
 
@@ -96,4 +105,19 @@
     flex-grow: 2;
 
     padding: 0 2rem;
+}
+
+.content.registpage .introduction .intro-section {
+    margin: 2rem auto;
+    text-align: left;
+}
+
+.content.registpage .introduction .intro-section h2 {
+    margin: 0 0;
+    width: max-content;
+    border-bottom: dashed 1px #8d8d8d;
+}
+
+.content.registpage .introduction .intro-section p {
+    margin: .5rem 0;
 }

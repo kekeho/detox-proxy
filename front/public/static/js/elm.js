@@ -11142,7 +11142,7 @@ var $author$project$RegistPage$View$introductionView = A2(
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text('すぐにアクセス制御を設定して、数分後には健康的な生活を送ることができるようになります。')
+							$elm$html$Html$text('すぐにアクセス制御を設定して、数分後には健康的な生活への第一歩を踏み出すことができます。')
 						]))
 				])),
 			A2(
@@ -11159,9 +11159,48 @@ var $author$project$RegistPage$View$introductionView = A2(
 						]))
 				]))
 		]));
-var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $author$project$RegistPage$View$confirmTeamOfServiceView = A2(
+	$elm$html$Html$p,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('team-of-service')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$type_('checkbox'),
+					$elm$html$Html$Attributes$id('teamofservice')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$label,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$for('teamofservice')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('/docs/teamofservice'),
+							$elm$html$Html$Attributes$target('_blank')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('利用規約')
+						])),
+					$elm$html$Html$text('に同意')
+				]))
+		]));
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $author$project$RegistPage$View$registFieldView = F3(
 	function (formId, formType, labelStr) {
 		return A2(
@@ -11229,6 +11268,7 @@ var $author$project$RegistPage$View$registFormView = function () {
 						formColList),
 					_List_fromArray(
 						[
+							$author$project$RegistPage$View$confirmTeamOfServiceView,
 							A2(
 							$elm$html$Html$input,
 							_List_fromArray(
