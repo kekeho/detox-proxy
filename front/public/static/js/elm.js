@@ -10559,20 +10559,32 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Model$Model = F2(
-	function (key, url) {
-		return {key: key, url: url};
+var $author$project$Model$Model = F3(
+	function (key, url, registPage) {
+		return {key: key, registPage: registPage, url: url};
+	});
+var $author$project$RegistPage$Model$RegistPageModel = F4(
+	function (username, email, password, teamOfServiceAccept) {
+		return {email: email, password: password, teamOfServiceAccept: teamOfServiceAccept, username: username};
+	});
+var $author$project$RegistPage$Model$initModel = A4($author$project$RegistPage$Model$RegistPageModel, '', '', '', false);
+var $author$project$Model$initModel = F2(
+	function (url, key) {
+		return A3($author$project$Model$Model, key, url, $author$project$RegistPage$Model$initModel);
 	});
 var $author$project$Main$init = F3(
 	function (_v0, url, key) {
 		return _Utils_Tuple2(
-			A2($author$project$Model$Model, key, url),
+			A2($author$project$Model$initModel, url, key),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Main$RegistPageMsg = function (a) {
+	return {$: 'RegistPageMsg', a: a};
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
@@ -10620,31 +10632,78 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $author$project$RegistPage$RegistPage$update = F2(
+	function (msg, model) {
+		var event = msg.a;
+		switch (event.$) {
+			case 'UserName':
+				var username = event.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{username: username}),
+					$elm$core$Platform$Cmd$none);
+			case 'Email':
+				var email = event.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{email: email}),
+					$elm$core$Platform$Cmd$none);
+			case 'Password':
+				var pw = event.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{password: pw}),
+					$elm$core$Platform$Cmd$none);
+			case 'TeamOfService':
+				var v = event.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{teamOfServiceAccept: v}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2($author$project$RegistPage$Model$initModel, $elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'UrlRequested') {
-			var urlRequest = msg.a;
-			if (urlRequest.$ === 'Internal') {
-				var url = urlRequest.a;
+		switch (msg.$) {
+			case 'UrlRequested':
+				var urlRequest = msg.a;
+				if (urlRequest.$ === 'Internal') {
+					var url = urlRequest.a;
+					return _Utils_Tuple2(
+						model,
+						A2(
+							$elm$browser$Browser$Navigation$pushUrl,
+							model.key,
+							$elm$url$Url$toString(url)));
+				} else {
+					var href = urlRequest.a;
+					return _Utils_Tuple2(
+						model,
+						$elm$browser$Browser$Navigation$load(href));
+				}
+			case 'UrlChanged':
+				var url = msg.a;
 				return _Utils_Tuple2(
-					model,
-					A2(
-						$elm$browser$Browser$Navigation$pushUrl,
-						model.key,
-						$elm$url$Url$toString(url)));
-			} else {
-				var href = urlRequest.a;
+					_Utils_update(
+						model,
+						{url: url}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var subMsg = msg.a;
+				var _v2 = A2($author$project$RegistPage$RegistPage$update, subMsg, model.registPage);
+				var registModel = _v2.a;
+				var subCmd = _v2.b;
 				return _Utils_Tuple2(
-					model,
-					$elm$browser$Browser$Navigation$load(href));
-			}
-		} else {
-			var url = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{url: url}),
-				$elm$core$Platform$Cmd$none);
+					_Utils_update(
+						model,
+						{registPage: registModel}),
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$RegistPageMsg, subCmd));
 		}
 	});
 var $elm$html$Html$footer = _VirtualDom_node('footer');
@@ -11159,50 +11218,109 @@ var $author$project$RegistPage$View$introductionView = A2(
 						]))
 				]))
 		]));
+var $author$project$RegistPage$RegistPage$Email = function (a) {
+	return {$: 'Email', a: a};
+};
+var $author$project$RegistPage$RegistPage$FormInput = function (a) {
+	return {$: 'FormInput', a: a};
+};
+var $author$project$RegistPage$RegistPage$Password = function (a) {
+	return {$: 'Password', a: a};
+};
+var $author$project$RegistPage$RegistPage$SubmitForm = {$: 'SubmitForm'};
+var $author$project$RegistPage$RegistPage$UserName = function (a) {
+	return {$: 'UserName', a: a};
+};
+var $author$project$RegistPage$RegistPage$TeamOfService = function (a) {
+	return {$: 'TeamOfService', a: a};
+};
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $elm$html$Html$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $elm$html$Html$Events$onCheck = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
+};
 var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
-var $author$project$RegistPage$View$confirmTeamOfServiceView = A2(
-	$elm$html$Html$p,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('team-of-service')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$input,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$type_('checkbox'),
-					$elm$html$Html$Attributes$id('teamofservice')
-				]),
-			_List_Nil),
-			A2(
-			$elm$html$Html$label,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$for('teamofservice')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$href('/docs/teamofservice'),
-							$elm$html$Html$Attributes$target('_blank')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('利用規約')
-						])),
-					$elm$html$Html$text('に同意')
-				]))
-		]));
+var $author$project$RegistPage$View$confirmTeamOfServiceView = function (nowValue) {
+	var valueStr = nowValue ? 'true' : 'false';
+	return A2(
+		$elm$html$Html$p,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('team-of-service')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('checkbox'),
+						$elm$html$Html$Attributes$id('teamofservice'),
+						$elm$html$Html$Attributes$value(valueStr),
+						$elm$html$Html$Events$onCheck(
+						function (x) {
+							return $author$project$RegistPage$RegistPage$FormInput(
+								$author$project$RegistPage$RegistPage$TeamOfService(x));
+						})
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$label,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$for('teamofservice')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('/docs/teamofservice'),
+								$elm$html$Html$Attributes$target('_blank')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('利用規約')
+							])),
+						$elm$html$Html$text('に同意')
+					]))
+			]));
+};
 var $elm$html$Html$form = _VirtualDom_node('form');
-var $author$project$RegistPage$View$registFieldView = F3(
-	function (formId, formType, labelStr) {
+var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		$elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
+var $author$project$RegistPage$View$registFieldView = F5(
+	function (formId, formType, labelStr, val, attr) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -11226,18 +11344,14 @@ var $author$project$RegistPage$View$registFieldView = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$type_(formType),
-							$elm$html$Html$Attributes$id(formId)
+							$elm$html$Html$Attributes$id(formId),
+							$elm$html$Html$Attributes$value(val),
+							attr
 						]),
 					_List_Nil)
 				]));
 	});
-var $author$project$RegistPage$View$registFormView = function () {
-	var formColList = _List_fromArray(
-		[
-			_Utils_Tuple3('username', 'text', 'ユーザー名'),
-			_Utils_Tuple3('email', 'email', 'メールアドレス'),
-			_Utils_Tuple3('password', 'password', 'パスワード')
-		]);
+var $author$project$RegistPage$View$registFormView = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -11255,45 +11369,76 @@ var $author$project$RegistPage$View$registFormView = function () {
 					])),
 				A2(
 				$elm$html$Html$form,
-				_List_Nil,
-				_Utils_ap(
-					A2(
-						$elm$core$List$map,
-						function (_v0) {
-							var i = _v0.a;
-							var t = _v0.b;
-							var l = _v0.c;
-							return A3($author$project$RegistPage$View$registFieldView, i, t, l);
-						},
-						formColList),
-					_List_fromArray(
-						[
-							$author$project$RegistPage$View$confirmTeamOfServiceView,
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$type_('submit'),
-									$elm$html$Html$Attributes$value('登録')
-								]),
-							_List_Nil)
-						])))
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onSubmit(
+						$author$project$RegistPage$RegistPage$FormInput($author$project$RegistPage$RegistPage$SubmitForm))
+					]),
+				_List_fromArray(
+					[
+						A5(
+						$author$project$RegistPage$View$registFieldView,
+						'username',
+						'text',
+						'ユーザー名',
+						model.username,
+						$elm$html$Html$Events$onInput(
+							function (s) {
+								return $author$project$RegistPage$RegistPage$FormInput(
+									$author$project$RegistPage$RegistPage$UserName(s));
+							})),
+						A5(
+						$author$project$RegistPage$View$registFieldView,
+						'email',
+						'email',
+						'メールアドレス',
+						model.email,
+						$elm$html$Html$Events$onInput(
+							function (s) {
+								return $author$project$RegistPage$RegistPage$FormInput(
+									$author$project$RegistPage$RegistPage$Email(s));
+							})),
+						A5(
+						$author$project$RegistPage$View$registFieldView,
+						'password',
+						'password',
+						'パスワード',
+						model.password,
+						$elm$html$Html$Events$onInput(
+							function (s) {
+								return $author$project$RegistPage$RegistPage$FormInput(
+									$author$project$RegistPage$RegistPage$Password(s));
+							})),
+						$author$project$RegistPage$View$confirmTeamOfServiceView(model.teamOfServiceAccept),
+						A2(
+						$elm$html$Html$input,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$type_('submit'),
+								$elm$html$Html$Attributes$value('登録')
+							]),
+						_List_Nil)
+					]))
 			]));
-}();
-var $author$project$RegistPage$View$view = _Utils_Tuple2(
-	'registpage',
-	_List_fromArray(
-		[
-			$author$project$RegistPage$View$introductionView,
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('regist')
-				]),
-			_List_fromArray(
-				[$author$project$RegistPage$View$registFormView]))
-		]));
+};
+var $author$project$RegistPage$View$view = function (model) {
+	return _Utils_Tuple2(
+		'registpage',
+		_List_fromArray(
+			[
+				$author$project$RegistPage$View$introductionView,
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('regist')
+					]),
+				_List_fromArray(
+					[
+						$author$project$RegistPage$View$registFormView(model)
+					]))
+			]));
+};
 var $author$project$Main$view = function (model) {
 	var _v0 = function () {
 		var _v1 = A2($elm$url$Url$Parser$parse, $author$project$Model$routeParser, model.url);
@@ -11307,7 +11452,17 @@ var $author$project$Main$view = function (model) {
 					return $author$project$LoginPage$View$view;
 				default:
 					var _v4 = _v1.a;
-					return $author$project$RegistPage$View$view;
+					return function (_v5) {
+						var c_ = _v5.a;
+						var v_ = _v5.b;
+						return _Utils_Tuple2(
+							c_,
+							A2(
+								$elm$core$List$map,
+								$elm$html$Html$map($author$project$Main$RegistPageMsg),
+								v_));
+					}(
+						$author$project$RegistPage$View$view(model.registPage));
 			}
 		} else {
 			return $author$project$View$notFoundView;
@@ -11334,4 +11489,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$UrlRequested, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"RegistPageMsg":["RegistPage.RegistPage.RegistPageMsg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"RegistPage.RegistPage.RegistPageMsg":{"args":[],"tags":{"FormInput":["RegistPage.RegistPage.InputEvent"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"RegistPage.RegistPage.InputEvent":{"args":[],"tags":{"UserName":["String.String"],"Email":["String.String"],"Password":["String.String"],"TeamOfService":["Basics.Bool"],"SubmitForm":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}}}}})}});}(this));

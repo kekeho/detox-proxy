@@ -4,10 +4,13 @@ import Browser.Navigation as Nav
 import Url
 import Url.Parser
 
+import RegistPage.Model
+
 
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
+    , registPage: RegistPage.Model.RegistPageModel
     }
 
 
@@ -20,6 +23,14 @@ type Route
 
 
 -- FUNC
+
+
+initModel : Url.Url -> Nav.Key -> Model
+initModel url key =
+    Model key url
+        RegistPage.Model.initModel
+
+
 
 routeParser: Url.Parser.Parser (Route -> a) a
 routeParser =

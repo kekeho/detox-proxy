@@ -2,6 +2,7 @@ module Main exposing (init)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Browser
 import Browser.Navigation as Nav
 import Url
@@ -10,8 +11,11 @@ import View
 import Model exposing (..)
 import IndexPage.View
 import LoginPage.View
+import RegistPage.RegistPage
+import RegistPage.Model
 import RegistPage.View
 import Url.Parser
+import Html
 
 main : Program () Model Msg
 main =
@@ -27,12 +31,13 @@ main =
 
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
 init () url key =
-    (Model key url, Cmd.none)
+    (initModel url key, Cmd.none)
 
 
 type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
+    | RegistPageMsg RegistPage.RegistPage.RegistPageMsg
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -49,6 +54,15 @@ update msg model =
         UrlChanged url ->
             ( { model | url = url }
             , Cmd.none
+            )
+        
+        RegistPageMsg subMsg ->
+            let
+                (registModel, subCmd) =
+                    RegistPage.RegistPage.update subMsg model.registPage
+            in
+            ( { model | registPage = registModel }
+            , Cmd.map RegistPageMsg subCmd
             )
 
 
@@ -67,7 +81,11 @@ view model =
                 Just LoginPage ->
                     LoginPage.View.view
                 Just RegistPage ->
-                    RegistPage.View.view
+                    RegistPage.View.view model.registPage
+                        |> \(c_, v_) ->
+                            ( c_
+                            , List.map (Html.map RegistPageMsg) v_
+                            )
                 Nothing ->
                     View.notFoundView
     in

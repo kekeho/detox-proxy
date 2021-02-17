@@ -2,49 +2,49 @@ module RegistPage.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
-view: (String, List (Html msg))
-view =
+import RegistPage.RegistPage exposing (..)
+import RegistPage.Model exposing (RegistPageModel)
+
+
+view: RegistPageModel -> (String, List (Html RegistPageMsg))
+view model =
     ( "registpage"
     , [ introductionView
       , div [ class "regist" ]
-        [ registFormView
+        [ registFormView model
         ]
       ]
     )
 
 
-
-registFormView : Html msg
-registFormView =
-    let
-        formColList =
-            [ ("username", "text", "ユーザー名")
-            , ("email", "email", "メールアドレス")
-            , ("password", "password", "パスワード")
-            ]
-    in
+registFormView : RegistPageModel -> Html RegistPageMsg
+registFormView model =
     div [ class "regist-panel" ]
         [ h1 [] [ text "ユーザー登録" ]
-        
-        , Html.form [ ]
-            ( List.map (\(i, t, l) -> registFieldView i t l) formColList
-            ++ [ confirmTeamOfServiceView
-               , input [ type_ "submit", value "登録" ] [] 
-               ]
-            )
+        , Html.form [ onSubmit <| FormInput SubmitForm ]
+            [ registFieldView "username" "text" "ユーザー名" model.username
+                (onInput <| (\s -> FormInput (UserName s)))
+            , registFieldView "email" "email" "メールアドレス" model.email
+                (onInput <| (\s -> FormInput (Email s)))
+            , registFieldView "password" "password" "パスワード" model.password
+                (onInput <| (\s -> FormInput (Password s)))
+            , confirmTeamOfServiceView model.teamOfServiceAccept
+            , input [ type_ "submit", value "登録" ] [] 
+            ]
         ]
 
 
-registFieldView : String -> String -> String -> Html msg
-registFieldView formId formType labelStr =
+registFieldView : String -> String -> String -> String -> Attribute msg -> Html msg
+registFieldView formId formType labelStr val attr =
     div [ class "form-column" ]
         [ label [ for formId ] [ text labelStr ]
-        , input [ type_ formType, id formId ] []
+        , input [ type_ formType, id formId, value val , attr ] []
         ]
 
 
-introductionView : Html msg
+introductionView : Html RegistPageMsg
 introductionView =
     div [ class "introduction" ]
         [ h1 [] 
@@ -68,10 +68,19 @@ introductionSection sectionTitle contents =
         (h2 [] [ text sectionTitle ] :: contents)
 
 
-confirmTeamOfServiceView : Html msg
-confirmTeamOfServiceView =
+confirmTeamOfServiceView : Bool -> Html RegistPageMsg
+confirmTeamOfServiceView nowValue =
+    let
+        valueStr =
+            if nowValue then "true"
+            else "false"
+    in
     p [ class "team-of-service" ] 
-        [ input [ type_ "checkbox", id "teamofservice" ] [ ]
+        [ input
+            [ type_ "checkbox", id "teamofservice", value valueStr
+            , onCheck (\x -> FormInput (TeamOfService x))
+            ]
+            [ ]
         , label [ for "teamofservice" ] 
             [ a [ href "/docs/teamofservice", target "_blank" ]  [ text "利用規約" ]
             , text "に同意"
