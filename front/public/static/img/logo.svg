@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="300mm"
+   height="70mm"
+   viewBox="0 0 300 70"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (e86c8708, 2021-01-15)"
+   sodipodi:docname="logo.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.70734139"
+     inkscape:cx="466.08155"
+     inkscape:cy="-77.453394"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g987"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     width="250mm"
+     inkscape:window-width="1676"
+     inkscape:window-height="993"
+     inkscape:window-x="2"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:-1.32292px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="56.716362"
+       y="50.476315"
+       id="text12"><tspan
+         sodipodi:role="line"
+         id="tspan10"
+         x="56.716362"
+         y="50.476315"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:42.3333px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4946f1;fill-opacity:1;stroke-width:0.264583">detox<tspan
+   style="font-size:19.7556px"
+   id="tspan959"> </tspan>-<tspan
+   style="font-size:19.7556px"
+   id="tspan952"> </tspan>proxy</tspan></text>
+    <g
+       id="g905"
+       transform="translate(-112.98192,1.1214087)"
+       style="stroke-width:6;stroke-miterlimit:4;stroke-dasharray:none">
+      <g
+         id="g987"
+         transform="matrix(1.2566103,0,0,1.4015341,-35.547071,-19.671039)">
+        <rect
+           style="fill:#4946f1;fill-opacity:1;stroke:none;stroke-width:4.52116"
+           id="rect1092"
+           width="38.142101"
+           height="6.0862746"
+           x="118.73836"
+           y="43.669739"
+           ry="2.5140381" />
+        <rect
+           style="fill:#4287dc;fill-opacity:1;stroke:none;stroke-width:4.52116;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect1092-9"
+           width="26.395891"
+           height="6.0862732"
+           x="130.48457"
+           y="43.669739"
+           ry="1.5570873" />
+        <g
+           id="g1156"
+           transform="matrix(0.9736324,-0.20453393,0.25443184,0.9736324,-4.3257244,26.487091)">
+          <rect
+             style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:4.53175;stroke-miterlimit:4;stroke-dasharray:none"
+             id="rect1092-1-4"
+             width="20.912821"
+             height="6.2825146"
+             x="76.806686"
+             y="100.90097"
+             ry="2.5950985"
+             transform="matrix(0.87867859,-0.4774138,0.5599749,0.82850957,0,0)" />
+          <rect
+             style="fill:#4946f1;fill-opacity:1;stroke:none;stroke-width:4.53175;stroke-miterlimit:4;stroke-dasharray:none"
+             id="rect1092-1"
+             width="28.235043"
+             height="6.820128"
+             x="76.101822"
+             y="99.129433"
+             ry="2.5950985"
+             transform="matrix(0.87867859,-0.4774138,0.5599749,0.82850957,0,0)" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
