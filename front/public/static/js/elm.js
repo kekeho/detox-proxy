@@ -12000,7 +12000,6 @@ var $author$project$RegistPage$View$registPanelView = function (model) {
 var $author$project$RegistPage$View$registView = function (model) {
 	return _List_fromArray(
 		[
-			$author$project$RegistPage$View$introductionView,
 			A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -12010,7 +12009,8 @@ var $author$project$RegistPage$View$registView = function (model) {
 			_List_fromArray(
 				[
 					$author$project$RegistPage$View$registPanelView(model)
-				]))
+				])),
+			$author$project$RegistPage$View$introductionView
 		]);
 };
 var $author$project$RegistPage$View$view = function (model) {

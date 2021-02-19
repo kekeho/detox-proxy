@@ -17,9 +17,9 @@ view model =
 
 registView : RegistPageModel -> List (Html RegistPageMsg)
 registView model =
-    [ introductionView
-    , div [ class "regist" ]
+    [ div [ class "regist" ]
         [ registPanelView model ]
+    , introductionView
     ]
 
 
