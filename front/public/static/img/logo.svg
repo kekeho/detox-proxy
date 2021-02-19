@@ -12,7 +12,7 @@
    viewBox="0 0 300 50"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.2 (e86c8708, 2021-01-15)"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
    sodipodi:docname="logo.svg"
    inkscape:export-filename="/Users/hiroki/Desktop/logo.png"
    inkscape:export-xdpi="96"
@@ -26,18 +26,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.64783178"
-     inkscape:cx="568.48622"
-     inkscape:cy="130.75604"
+     inkscape:zoom="20.730617"
+     inkscape:cx="171.59525"
+     inkscape:cy="61.757598"
      inkscape:document-units="mm"
-     inkscape:current-layer="g905"
+     inkscape:current-layer="g1156"
      inkscape:document-rotation="0"
      showgrid="false"
      width="250mm"
-     inkscape:window-width="1676"
-     inkscape:window-height="993"
-     inkscape:window-x="2"
-     inkscape:window-y="27"
+     inkscape:window-width="2560"
+     inkscape:window-height="1390"
+     inkscape:window-x="3640"
+     inkscape:window-y="24"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -139,8 +139,8 @@
           <rect
              style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:4.53175;stroke-miterlimit:4;stroke-dasharray:none"
              id="rect1092-1-4"
-             width="20.912821"
-             height="6.2825146"
+             width="27.5245"
+             height="6.2443724"
              x="76.812729"
              y="101.45213"
              ry="2.5950985"

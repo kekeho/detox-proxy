@@ -10,7 +10,12 @@ headerView =
     header []
         [ a [ href "/" ]
                 [ div [ class "logo" ]
-                    [ text "detox-proxy" ]
+                    [ img 
+                        [ src "/static/img/logo.svg" 
+                        , alt "detox-proxy"
+                        ]
+                        []
+                    ]
             ]
         
         , div [ class "nav" ]

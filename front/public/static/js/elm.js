@@ -11303,7 +11303,15 @@ var $author$project$View$footerView = A2(
 						]))
 				]))
 		]));
+var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$header = _VirtualDom_node('header');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
 var $author$project$View$headerView = A2(
 	$elm$html$Html$header,
 	_List_Nil,
@@ -11325,7 +11333,14 @@ var $author$project$View$headerView = A2(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('detox-proxy')
+							A2(
+							$elm$html$Html$img,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$src('/static/img/logo.svg'),
+									$elm$html$Html$Attributes$alt('detox-proxy')
+								]),
+							_List_Nil)
 						]))
 				])),
 			A2(
@@ -11604,13 +11619,6 @@ var $author$project$Model$routeParser = $elm$url$Url$Parser$oneOf(
 			$author$project$Model$RegistPage,
 			$elm$url$Url$Parser$s('regist'))
 		]));
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
 var $author$project$IndexPage$View$view = _Utils_Tuple2(
 	'indexpage',
 	_List_fromArray(

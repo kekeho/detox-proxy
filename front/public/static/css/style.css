@@ -62,13 +62,18 @@ header {
 
 header a {
     text-decoration: none;
-    height: max-content;
+    height: 100%;
+    width: max-content;
 }
 
 header .logo {
-    width: max-content;
+    height: 100%;
     font-weight: 800;
     color: var(--key-color);
+}
+
+header .logo img {
+    height: 100%;
 }
 
 header .nav {
@@ -82,6 +87,7 @@ header .nav a {
     text-decoration: none;
     color: var(--font-color);
     font-weight: 500;
+    height: max-content;
 }
 
 header .nav .regist {
