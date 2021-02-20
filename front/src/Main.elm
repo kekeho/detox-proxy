@@ -14,6 +14,7 @@ import LoginPage.View
 import RegistPage.RegistPage
 import RegistPage.Model
 import RegistPage.View
+import LoginPage.LoginPage
 import Url.Parser
 import Html
 
@@ -38,6 +39,7 @@ type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
     | RegistPageMsg RegistPage.RegistPage.RegistPageMsg
+    | LoginPageMsg LoginPage.LoginPage.LoginPageMsg
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -64,6 +66,16 @@ update msg model =
             ( { model | registPage = registModel }
             , Cmd.map RegistPageMsg subCmd
             )
+        
+        LoginPageMsg subMsg ->
+            let
+                (loginModel, subCmd) =
+                    LoginPage.LoginPage.update subMsg model.loginPage
+            in
+            ( { model | loginPage = loginModel }
+            , Cmd.map LoginPageMsg subCmd
+            )
+            
 
 
 subscriptions : Model -> Sub Msg
@@ -74,12 +86,19 @@ subscriptions model =
 view : Model -> Browser.Document Msg
 view model =
     let
+        map : (a -> msg) -> (String, List (Html a)) -> (String, List (Html msg))
+        map msg (cls, view_) =
+            ( cls
+            , List.map (Html.map msg) view_
+            )
+
         (c, v) =
             case (Url.Parser.parse Model.routeParser model.url) of
                 Just IndexPage ->
                     IndexPage.View.view
                 Just LoginPage ->
-                    LoginPage.View.view
+                    LoginPage.View.view model.loginPage
+                        |> map LoginPageMsg
                 Just RegistPage ->
                     RegistPage.View.view model.registPage
                         |> \(c_, v_) ->

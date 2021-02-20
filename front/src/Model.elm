@@ -5,12 +5,14 @@ import Url
 import Url.Parser
 
 import RegistPage.Model
+import LoginPage.Model
 
 
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , registPage: RegistPage.Model.RegistPageModel
+    , loginPage: LoginPage.Model.LoginPageModel
     }
 
 
@@ -29,6 +31,7 @@ initModel : Url.Url -> Nav.Key -> Model
 initModel url key =
     Model key url
         RegistPage.Model.initModel
+        LoginPage.Model.initLoginPageModel
 
 
 

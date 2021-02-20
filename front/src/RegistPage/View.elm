@@ -89,14 +89,10 @@ introductionSection sectionTitle contents =
 
 confirmTeamOfServiceView : Bool -> Html RegistPageMsg
 confirmTeamOfServiceView nowValue =
-    let
-        valueStr =
-            if nowValue then "true"
-            else "false"
-    in
     p [ class "team-of-service" ] 
         [ input
-            [ type_ "checkbox", id "teamofservice", value valueStr
+            [ type_ "checkbox", id "teamofservice"
+            , checked nowValue
             , required True
             , onCheck (\x -> FormInput (TeamOfService x))
             ]
