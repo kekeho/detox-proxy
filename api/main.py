@@ -48,7 +48,7 @@ async def create_user(u: schema.CreateUser):
     description='Activate user',
     status_code=status.HTTP_200_OK,
     responses={
-        status.HTTP_200_OK: {
+        status.HTTP_307_TEMPORARY_REDIRECT: {
             'description': 'Successful Response (user account activated)',
         },
         status.HTTP_400_BAD_REQUEST: {
@@ -73,7 +73,16 @@ async def activate_user(token: str):
         u.is_active = True
         s.delete(v)
 
-    return Response(None, status.HTTP_200_OK)
+        token = db.Token.issue_token(u)
+        maxage = 'Max-Age=7776000;'
+        cookie = f'token={token}; HttpOnly; '
+        cookie += f'SameSite=Strict; Secure; {maxage} path=/;'
+        header = {
+            'Set-Cookie': cookie,
+            'Location': '/'
+        }
+
+    return Response(None, status.HTTP_307_TEMPORARY_REDIRECT, headers=header)
 
 
 @app.post(

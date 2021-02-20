@@ -308,7 +308,7 @@ class CreateUserVerify(Base):
 <br/>
 手続きを完了させるために、以下のリンクを1時間以内にクリックしてください。<br/>
 <br/>
-<a href="https://api.{hostname}:{https_port}/user/activate/{raw_token}">
+<a href="https://{hostname}:{https_port}/api/user/activate/{raw_token}">
     アカウントの有効化
 </a>
 """,
