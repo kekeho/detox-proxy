@@ -148,7 +148,10 @@ footer .logo {
     box-shadow: var(--panel-boxshadow);
 
     background-color: var(--bg-color);
+}
 
+.panel.flat {
+    box-shadow: none;
 }
 
 

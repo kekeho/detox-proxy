@@ -65,7 +65,7 @@ registFieldView formId formType labelStr req val attr =
 
 introductionView : Html RegistPageMsg
 introductionView =
-    div [ class "introduction panel" ]
+    div [ class "introduction panel flat" ]
         [ h1 [] 
             [ text "バランスの取れた デジタルライフへ" ]
         , introductionSection "登録は簡単"
