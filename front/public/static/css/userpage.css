@@ -1,0 +1,15 @@
+.content.userpage table {
+    width: 100%;
+}
+
+.content.userpage .block-list .block-row .active {
+    width: 2rem;
+}
+
+.content.userpage .block-list .block-row .start {
+    width: 6rem;
+}
+
+.content.userpage .block-list .block-row .end {
+    width: 6rem;
+}
