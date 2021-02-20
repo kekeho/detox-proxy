@@ -16,6 +16,7 @@ import RegistPage.Model
 import RegistPage.View
 import LoginPage.LoginPage
 import UserPage.UserPage
+import UserPage.View
 import Url.Parser
 import Html
 
@@ -110,7 +111,12 @@ view model =
         (c, v) =
             case (Url.Parser.parse Model.routeParser model.url) of
                 Just IndexPage ->
-                    IndexPage.View.view
+                    case model.userPage.user of
+                        Just (Ok u) ->
+                            UserPage.View.view u model.userPage
+                                |> map UserPageMsg
+                        _ ->
+                            IndexPage.View.view
                 Just LoginPage ->
                     LoginPage.View.view model.loginPage
                         |> map LoginPageMsg
