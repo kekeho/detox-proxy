@@ -11819,6 +11819,40 @@ var $author$project$RegistPage$View$confirmTeamOfServiceView = function (nowValu
 					]))
 			]));
 };
+var $author$project$RegistPage$View$errorView = function (maybeResult) {
+	if (maybeResult.$ === 'Nothing') {
+		return A2($elm$html$Html$p, _List_Nil, _List_Nil);
+	} else {
+		if (maybeResult.a.$ === 'Ok') {
+			return A2($elm$html$Html$p, _List_Nil, _List_Nil);
+		} else {
+			var e = maybeResult.a.a;
+			if ((e.$ === 'BadStatus') && (e.a === 409)) {
+				return A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('error')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('すでにアカウントが登録されています')
+						]));
+			} else {
+				return A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('error')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('不明なエラーが発生しました')
+						]));
+			}
+		}
+	}
+};
 var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
 	return _Utils_Tuple2(msg, true);
@@ -11929,7 +11963,8 @@ var $author$project$RegistPage$View$registFormView = function (model) {
 						$elm$html$Html$Attributes$type_('submit'),
 						$elm$html$Html$Attributes$value('登録')
 					]),
-				_List_Nil)
+				_List_Nil),
+				$author$project$RegistPage$View$errorView(model.result)
 			]));
 };
 var $author$project$RegistPage$View$registeredView = function (model) {

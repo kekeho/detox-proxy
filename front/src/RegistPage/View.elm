@@ -6,6 +6,8 @@ import Html.Events exposing (..)
 
 import RegistPage.RegistPage exposing (..)
 import RegistPage.Model exposing (RegistPageModel)
+import UserPage.Model exposing (User)
+import Http
 
 
 view: RegistPageModel -> (String, List (Html RegistPageMsg))
@@ -48,7 +50,8 @@ registFormView model =
             True model.password
             (onInput <| (\s -> FormInput (Password s)))
         , confirmTeamOfServiceView model.teamOfServiceAccept
-        , input [ type_ "submit", value "登録" ] [] 
+        , input [ type_ "submit", value "登録" ] []
+        , errorView model.result
         ]
 
 
@@ -116,3 +119,22 @@ registeredView model =
         , p []
             [ text "メールが届いていない場合は、迷惑フォルダを確認してみてください。" ]
         ]
+
+
+errorView : Maybe (Result Http.Error User) -> Html RegistPageMsg
+errorView maybeResult =
+    case maybeResult of
+        Nothing ->
+            p [] []
+        Just (Ok _) ->
+            p [] []
+        
+        Just (Err e) ->
+            case e of
+                Http.BadStatus 409 ->
+                    p [ class "error" ]
+                        [ text "すでにアカウントが登録されています" ]
+                _ ->
+                    p [ class "error" ]
+                        [ text "不明なエラーが発生しました" ]
+
