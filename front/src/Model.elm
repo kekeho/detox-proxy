@@ -6,6 +6,7 @@ import Url.Parser
 
 import RegistPage.Model
 import LoginPage.Model
+import UserPage.Model
 
 
 type alias Model =
@@ -13,6 +14,7 @@ type alias Model =
     , url : Url.Url
     , registPage: RegistPage.Model.RegistPageModel
     , loginPage: LoginPage.Model.LoginPageModel
+    , userPage: UserPage.Model.UserPageModel
     }
 
 
@@ -32,7 +34,7 @@ initModel url key =
     Model key url
         RegistPage.Model.initModel
         LoginPage.Model.initLoginPageModel
-
+        UserPage.Model.initUserPageModel
 
 
 routeParser: Url.Parser.Parser (Route -> a) a

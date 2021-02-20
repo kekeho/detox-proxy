@@ -46,7 +46,7 @@ update key msg model =
             case result of
                 Ok () ->
                     ( { model | result = Just result }
-                    , Nav.pushUrl key "/"
+                    , Nav.load "/"
                     )
                 
                 Err _ ->

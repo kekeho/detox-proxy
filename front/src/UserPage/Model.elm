@@ -1,6 +1,12 @@
 module UserPage.Model exposing (..)
 
 import Json.Decode as D
+import Http
+
+
+type alias UserPageModel =
+    { user : Maybe (Result Http.Error User)
+    }
 
 
 type alias User =
@@ -19,6 +25,12 @@ type alias BlockAddress =
     , active : Bool
     }
 
+
+-- INIT
+
+initUserPageModel : UserPageModel
+initUserPageModel =
+    UserPageModel Nothing
 
 
 -- Decoder

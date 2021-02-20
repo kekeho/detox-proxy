@@ -15,6 +15,7 @@ import RegistPage.RegistPage
 import RegistPage.Model
 import RegistPage.View
 import LoginPage.LoginPage
+import UserPage.UserPage
 import Url.Parser
 import Html
 
@@ -32,7 +33,9 @@ main =
 
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
 init () url key =
-    (initModel url key, Cmd.none)
+    ( initModel url key
+    , Cmd.map UserPageMsg UserPage.UserPage.getLoginUserInfo
+    )
 
 
 type Msg
@@ -40,6 +43,7 @@ type Msg
     | UrlChanged Url.Url
     | RegistPageMsg RegistPage.RegistPage.RegistPageMsg
     | LoginPageMsg LoginPage.LoginPage.LoginPageMsg
+    | UserPageMsg UserPage.UserPage.UserPageMsg
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -75,6 +79,17 @@ update msg model =
             ( { model | loginPage = loginModel }
             , Cmd.map LoginPageMsg subCmd
             )
+        
+        UserPageMsg subMsg ->
+            let
+                (userModel, subCmd) =
+                    UserPage.UserPage.update subMsg model.userPage
+            in
+            ( { model | userPage = userModel }
+            , Cmd.map UserPageMsg subCmd
+            )
+            
+
             
 
 
