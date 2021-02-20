@@ -70,7 +70,7 @@ update msg model =
         LoginPageMsg subMsg ->
             let
                 (loginModel, subCmd) =
-                    LoginPage.LoginPage.update subMsg model.loginPage
+                    LoginPage.LoginPage.update model.key subMsg model.loginPage
             in
             ( { model | loginPage = loginModel }
             , Cmd.map LoginPageMsg subCmd

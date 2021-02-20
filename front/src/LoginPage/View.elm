@@ -3,9 +3,10 @@ module LoginPage.View exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Http
+
 import LoginPage.LoginPage exposing (..)
 import LoginPage.Model exposing (LoginPageModel)
-import Http
 
 
 view: LoginPageModel -> (String, List (Html LoginPageMsg))

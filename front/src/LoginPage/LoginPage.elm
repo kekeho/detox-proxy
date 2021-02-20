@@ -1,7 +1,9 @@
 module LoginPage.LoginPage exposing (..)
 
-import LoginPage.Model exposing (..)
 import Http
+import Browser.Navigation as Nav
+
+import LoginPage.Model exposing (..)
 
 
 type InputEvent
@@ -17,8 +19,8 @@ type LoginPageMsg
 
 
 
-update : LoginPageMsg -> LoginPageModel ->  ( LoginPageModel, Cmd LoginPageMsg )
-update msg model =
+update : Nav.Key -> LoginPageMsg -> LoginPageModel ->  ( LoginPageModel, Cmd LoginPageMsg )
+update key msg model =
     case msg of
         FormInput event ->
             case event of
@@ -41,9 +43,16 @@ update msg model =
                     ( model, loginRequest model )
 
         GotLoginResult result ->
-            ( { model | result = Just result }
-            , Cmd.none
-            )
+            case result of
+                Ok () ->
+                    ( { model | result = Just result }
+                    , Nav.pushUrl key "/"
+                    )
+                
+                Err _ ->
+                    ( { model | result = Just result }
+                    , Cmd.none
+                    )
 
 -- CMD
 
