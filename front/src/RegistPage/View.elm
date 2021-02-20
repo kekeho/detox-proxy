@@ -19,7 +19,7 @@ view model =
 
 registView : RegistPageModel -> List (Html RegistPageMsg)
 registView model =
-    [ div [ class "regist" ]
+    [ div [ class "regist panel" ]
         [ registPanelView model ]
     , introductionView
     ]
@@ -65,7 +65,7 @@ registFieldView formId formType labelStr req val attr =
 
 introductionView : Html RegistPageMsg
 introductionView =
-    div [ class "introduction" ]
+    div [ class "introduction panel" ]
         [ h1 [] 
             [ text "バランスの取れた デジタルライフへ" ]
         , introductionSection "登録は簡単"

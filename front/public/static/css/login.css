@@ -1,0 +1,11 @@
+.content.loginpage {
+    display: flex;
+    justify-content: center;
+}
+
+
+.content.loginpage .login.panel {
+    margin-top: 3rem;
+    width: fit-content;
+    height: fit-content;
+}
