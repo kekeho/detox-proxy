@@ -123,6 +123,9 @@ async def login(login: schema.LoginUser):
             'model': schema.User,
             'description': 'Successful Response',
         },
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Login failed',
+        },
     },
 )
 async def get_loginuser_info(token: Optional[str] = Cookie(None)):
@@ -135,3 +138,30 @@ async def get_loginuser_info(token: Optional[str] = Cookie(None)):
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
         return schema.User.from_db(u)
+
+
+@app.post(
+    '/api/user/blockaddress',
+    description='Record block address',
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_200_OK: {
+            'model': schema.Block,
+            'description': 'Successful response',
+        },
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Unauthorized',
+        },
+    },
+)
+async def set_block_address(block_create: schema.BlockCreate,
+                            token: Optional[str] = Cookie(None)):
+    if token is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    with db.session_scope() as s:
+        u = db.Token.get_user(s, token)
+        if u is None:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+        return block_create.create(s, u)

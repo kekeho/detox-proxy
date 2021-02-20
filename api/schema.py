@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from fastapi import HTTPException, status
 from typing import List, Optional
 
+from sqlalchemy.orm.scoping import scoped_session
+
 import email_util
 from fastapi_mail import MessageSchema
 
@@ -29,6 +31,27 @@ class Block(BaseModel):
             end=db_block.end,
             active=db_block.active,
         )
+
+
+class BlockCreate(BaseModel):
+    url: str
+    start: int
+    end: int
+    active: bool
+
+    def create(self, s: scoped_session, 
+               db_user: db.User) -> Block:
+        b = db.Block()
+        b.user = db_user.id
+        b.url = self.url
+        b.start = self.start
+        b.end = self.end
+        b.active = self.active
+
+        s.add(b)
+        s.commit()
+
+        return Block.from_db(b)
 
 
 class User(BaseModel):
