@@ -1,5 +1,5 @@
 # Copyright (c) 2021 Hiroki Takemura (kekeho)
-# 
+
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -193,17 +193,28 @@ class Token(Base):
         return id
 
     @staticmethod
-    def get_token(raw_token) -> Optional[Any]:
+    def get_user(s: scoped_session, raw_token) -> Optional[Any]:
+        """Auth
+
+        returns
+        -------
+        maybe_user: Optional[User]
+            User -> success
+            None -> Unauthorized
+        """
         userid = Token.get_userid(raw_token)
-        with session_scope() as s:
-            user = s.query(User).get(userid)
-            if user is None:
-                return None
-            for token in user.tokens:
-                if token.is_active is False:
-                    continue
-                if token._check_token(raw_token):
-                    return token
+        if userid is None:
+            return None
+
+        tokens = s.query(Token).filter(
+            Token.user_id == userid
+        ).filter(
+            Token.is_active
+        )
+        for token in tokens:
+            if token._check_token(raw_token):
+                return s.query(User).get(userid)
+
         return None
 
     def expire(self) -> None:

@@ -6,6 +6,7 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Response
 from fastapi import status
+from fastapi.params import Cookie
 
 import schema
 import db
@@ -111,3 +112,26 @@ async def login(login: schema.LoginUser):
     cookie += f'SameSite=Strict; Secure; {maxage} path=/;'
     headers = {'Set-Cookie': cookie}
     return Response(None, status.HTTP_202_ACCEPTED, headers=headers)
+
+
+@app.get(
+    '/api/user',
+    description='Get login user info',
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_200_OK: {
+            'model': schema.User,
+            'description': 'Successful Response',
+        },
+    },
+)
+async def get_loginuser_info(token: Optional[str] = Cookie(None)):
+    if token is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    with db.session_scope() as s:
+        u = db.Token.get_user(s, token)
+        if u is None:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+        return schema.User.from_db(u)
