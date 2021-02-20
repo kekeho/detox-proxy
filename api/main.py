@@ -93,6 +93,9 @@ async def activate_user(token: str):
         status.HTTP_200_OK: {
             'description': 'Set token as cookie'
         },
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'username/password wrong'
+        }
     },
 )
 async def login(login: schema.LoginUser):

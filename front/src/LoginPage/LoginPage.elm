@@ -1,6 +1,7 @@
 module LoginPage.LoginPage exposing (..)
 
-import LoginPage.Model exposing (LoginPageModel)
+import LoginPage.Model exposing (..)
+import Http
 
 
 type InputEvent
@@ -12,6 +13,7 @@ type InputEvent
 
 type LoginPageMsg
     = FormInput InputEvent
+    | GotLoginResult (Result Http.Error ())
 
 
 
@@ -36,5 +38,19 @@ update msg model =
                     )
                 
                 SubmitForm ->
-                    ( model, Cmd.none )
-                
+                    ( model, loginRequest model )
+
+        GotLoginResult result ->
+            ( { model | result = Just result }
+            , Cmd.none
+            )
+
+-- CMD
+
+loginRequest : LoginPageModel -> Cmd LoginPageMsg
+loginRequest model =
+    Http.post
+        { url = "/api/user/login"
+        , body = Http.jsonBody <| loginModelEncoder model
+        , expect = Http.expectWhatever GotLoginResult
+        }
