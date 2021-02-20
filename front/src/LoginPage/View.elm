@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import LoginPage.LoginPage exposing (..)
 import LoginPage.Model exposing (LoginPageModel)
+import Http
 
 
 view: LoginPageModel -> (String, List (Html LoginPageMsg))
@@ -31,6 +32,7 @@ view model =
             , input
                 [ type_ "submit", value "ログイン" ]
                 []
+            , errorView model.result
             ]
         ]
       ]
@@ -43,3 +45,18 @@ loginFieldView formId formType labelStr req val attr =
         [ label [ for formId ] [ text labelStr ]
         , input [ type_ formType, id formId, required req, value val,attr ] []
         ]
+
+
+errorView : Maybe (Result Http.Error ()) -> Html msg
+errorView maybeResult =
+    case maybeResult of
+        Just (Err e) ->
+            case e of
+                Http.BadStatus 401 ->
+                    p [ class "error" ]
+                        [ text "メールアドレス、またはパスワードが間違っています" ]
+                _ ->
+                    p [ class "error" ]
+                        [ text "不明なエラーが発生しました" ]
+        _ ->
+            p [] []
