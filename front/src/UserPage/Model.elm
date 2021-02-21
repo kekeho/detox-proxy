@@ -22,6 +22,7 @@ type alias User =
 type BlockId
     = Id Int
     | New Int
+    | Update Int
 
 
 type ErrorCol
@@ -88,6 +89,26 @@ normalize b =
                 |> Err
 
 
+blockIdVal : BlockId -> Int
+blockIdVal b =
+    case b of
+        Id i ->
+            i
+        New i ->
+            i
+        Update i ->
+            i
+
+
+updateOrNew : BlockId -> BlockId
+updateOrNew b =
+    case b of
+        New _ ->
+            b
+        _ ->
+            Update <| blockIdVal b
+
+
 normalizeUrl : String -> Maybe String
 normalizeUrl rawurl =
     if String.contains "\n" rawurl then
@@ -96,8 +117,34 @@ normalizeUrl rawurl =
         Nothing
     else if not <| String.contains "." rawurl then
         Nothing
+    else if String.contains ".." rawurl then
+        Nothing
     else
         Just rawurl
+
+
+newBlockAddressList : List NormalizedBlockAddress -> List NormalizedBlockAddress
+newBlockAddressList lb =
+    List.filter isNewBlockAddress lb
+
+
+updateBlockAddressList : List NormalizedBlockAddress -> List NormalizedBlockAddress
+updateBlockAddressList lb =
+    List.filter isUpdateBlockAddress lb
+
+
+isNewBlockAddress : NormalizedBlockAddress -> Bool
+isNewBlockAddress b =
+    case b.id of
+        New _ -> True
+        _ -> False
+
+
+isUpdateBlockAddress : NormalizedBlockAddress -> Bool
+isUpdateBlockAddress b =
+    case b.id of
+        Update _ -> True
+        _ -> False
 
 
 -- Decoder
@@ -128,6 +175,17 @@ blockAddressEncoder : NormalizedBlockAddress -> E.Value
 blockAddressEncoder b =
     E.object
         [ ("url", E.string b.url)
+        , ("start", E.int b.start)
+        , ("end", E.int b.end)
+        , ("active", E.bool b.active)
+        ]
+
+
+updateBlockAddressEncoder : NormalizedBlockAddress -> E.Value
+updateBlockAddressEncoder b =
+    E.object
+        [ ("id", E.int <| blockIdVal b.id)
+        , ("url", E.string b.url)
         , ("start", E.int b.start)
         , ("end", E.int b.end)
         , ("active", E.bool b.active)

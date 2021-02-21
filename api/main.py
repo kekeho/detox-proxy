@@ -169,3 +169,20 @@ async def set_block_address(block_create_list: List[schema.BlockCreate],
         s.commit()
 
     return results
+
+
+@app.put(
+    '/api/user/blockaddress',
+    description='Update block address',
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_200_OK: {
+            'model': List[schema.Block]
+        },
+        status.HTTP_404_NOT_FOUND: {
+            'description': 'display not found'
+        }
+    },
+)
+async def update_block_address(update_list: List[schema.Block]):
+    return [x.update() for x in update_list]

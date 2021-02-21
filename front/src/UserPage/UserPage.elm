@@ -19,7 +19,7 @@ type UserPageMsg
     | GotLoginUserInfo (Result Http.Error User)
     | BlockListInput BlockId BlockListInputType
     | NewBlockAddress
-    | RegistNewBlocks
+    | RegistAndUpdateBlocks
     | GotRegistNewBlockResult (Result Http.Error ())
 
 
@@ -50,8 +50,8 @@ update msg model =
                             model.blockPanel
                                 |> List.map
                                     (\b -> 
-                                        if b.id == blockId 
-                                            then { b | active = bool } 
+                                        if b.id == blockId
+                                            then { b | id = updateOrNew b.id, active = bool } 
                                             else b
                                     )
                     in
@@ -66,7 +66,7 @@ update msg model =
                                 |> List.map
                                     (\b -> 
                                         if b.id == blockId 
-                                            then { b | url = host } 
+                                            then { b | id = updateOrNew b.id, url = host } 
                                             else b
                                     )
                     in
@@ -81,7 +81,7 @@ update msg model =
                                 |> List.map
                                     (\b -> 
                                         if b.id == blockId 
-                                            then { b | start = startMin } 
+                                            then { b | id = updateOrNew b.id, start = startMin } 
                                             else b
                                     )
                     in
@@ -96,7 +96,7 @@ update msg model =
                                 |> List.map
                                     (\b -> 
                                         if b.id == blockId 
-                                            then { b | end = endMin } 
+                                            then { b | id = updateOrNew b.id, end = endMin } 
                                             else b
                                     )
                     in
@@ -112,7 +112,7 @@ update msg model =
             , Cmd.none
             )
         
-        RegistNewBlocks ->
+        RegistAndUpdateBlocks ->
             let
                 normalized =
                     List.map normalize model.blockPanel
@@ -134,17 +134,12 @@ update msg model =
                         success =
                             List.map Result.toMaybe normalized
                                 |> List.filterMap (\x -> x)
-                        new =
-                            List.filter
-                                (\x ->
-                                    case x.id of
-                                        New _ -> True
-                                        Id _ -> False
-                                )
-                                success
                     in
                     ( model
-                    , registNewBlockAddress new
+                    , Cmd.batch
+                        [ registNewBlockAddress <| newBlockAddressList success
+                        , updateBlockAddress <| updateBlockAddressList success
+                        ]
                     )
                 _ ->
                     let
@@ -164,11 +159,11 @@ update msg model =
                     , Cmd.none
                     )
 
-        _ ->
+        GotRegistNewBlockResult result ->
+            -- TODO: エラー処理
             ( model
-            , Cmd.none
+            , getLoginUserInfo  -- update
             )
-            
 
 
 
@@ -188,4 +183,17 @@ registNewBlockAddress blockList =
         { url = "/api/user/blockaddress"
         , body = Http.jsonBody (E.list blockAddressEncoder blockList)
         , expect = Http.expectWhatever GotRegistNewBlockResult
+        }
+
+
+updateBlockAddress : List NormalizedBlockAddress -> Cmd UserPageMsg
+updateBlockAddress blockList =
+    Http.request
+        { method = "PUT"
+        , headers = []
+        , url = "/api/user/blockaddress"
+        , body = Http.jsonBody (E.list updateBlockAddressEncoder blockList)
+        , expect = Http.expectWhatever GotRegistNewBlockResult
+        , timeout = Nothing
+        , tracker = Nothing
         }

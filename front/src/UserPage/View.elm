@@ -88,7 +88,7 @@ controlView model =
             [ class "add-block", type_ "button", onClick NewBlockAddress ]
             [ text "追加" ]
         , button
-            [ class "update", type_ "button", onClick RegistNewBlocks ]
+            [ class "update", type_ "button", onClick RegistAndUpdateBlocks ]
             [ text "更新" ]
         ]
 
