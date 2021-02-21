@@ -32,6 +32,19 @@ class Block(BaseModel):
             active=db_block.active,
         )
 
+    def update(self):
+        with db.session_scope() as s:
+            b = s.query(db.Block).get(self.id)
+            if b is None:
+                raise HTTPException(status.HTTP_404_NOT_FOUND)
+            b.url = self.url
+            b.start = self.start
+            b.end = self.end
+            b.active = self.active
+            s.commit()
+
+            return self.from_db(b)
+
 
 class BlockCreate(BaseModel):
     url: str
@@ -86,7 +99,7 @@ class CreateUser(BaseModel):
 
     async def create(self, send_mail: bool = True) -> User:
         """Create User
-
+        WARNING: THIS METHOD DOES NOT COMMIT
         params
         ------
             send_mail:

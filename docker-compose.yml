@@ -13,14 +13,20 @@ services:
     build: detox_proxy
     ports:
       - 5001:5001
+    depends_on:
+      - api
 
   api:
     build: api
     env_file:
       - email.env
+    links:
+      - apidb
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+    depends_on:
+      - apidb
 
   apidb:
     image: postgres

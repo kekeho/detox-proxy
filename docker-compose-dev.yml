@@ -16,6 +16,8 @@ services:
     build: detox_proxy
     ports:
       - 5001:5001
+    depends_on:
+      - api
   
   api:
     build: 
@@ -25,11 +27,15 @@ services:
       - ./api:/code
     env_file: 
       - email.env
+    links:
+      - apidb
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
       DETOX_PROXY_HOST: "localhost"
       DETOX_PROXY_PORT: "8001"
+    depends_on:
+      - apidb
 
   apidb:
     image: postgres

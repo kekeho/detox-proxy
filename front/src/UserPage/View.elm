@@ -1,42 +1,49 @@
 module UserPage.View exposing (..)
 
-import UserPage.UserPage exposing (UserPageMsg)
 import UserPage.Model exposing (..)
+import UserPage.UserPage exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 
-view : User -> UserPageModel -> (String, List (Html UserPageMsg))
-view user model =
+view : UserPageModel -> (String, List (Html UserPageMsg))
+view model =
     ( "userpage"
-    , [ blockListPanelView user model
+    , [ blockListPanelView model
       ]
     )
 
 
-blockListPanelView : User -> UserPageModel -> Html UserPageMsg
-blockListPanelView user model =
+blockListPanelView : UserPageModel -> Html UserPageMsg
+blockListPanelView model =
     div [ class "blocklist panel" ]
         [ h1 [] [ text "ブロックリスト" ]
-        , blockListView user model
+        , div [ class "blocklist-container" ]
+            [ blockListView model 
+            , controlView model
+            ]
         ]
 
 
-blockListView : User -> UserPageModel -> Html UserPageMsg
-blockListView user model =
+blockListView : UserPageModel -> Html UserPageMsg
+blockListView model =
     table [ class "block-list" ]
-        [ thead []
+        [ col [ class "active" ] []
+        , col [ class "host" ] []
+        , col [ class "start" ] []
+        , col [ class "end" ] []
+        , thead []
             [ tr [] 
-                [ th [] [ text "Active" ]
+                [ th [] [ text "ON" ]
                 , th [] [ text "Host" ]
-                , th [] [ text "遮断" ]
-                , th [] [ text "再開" ]
-                ] 
+                , th [] [ text "遮断 [分]" ]
+                , th [] [ text "再開 [分]" ]
+                ]
             ]
-
         , tbody []
-            <| List.map blockRowView user.block
+            <| List.map blockRowView model.blockPanel
         ]
 
 
@@ -44,10 +51,52 @@ blockRowView : BlockAddress -> Html UserPageMsg
 blockRowView block =
     tr [ class "block-row" ]
         [ td [ class "active" ]
-            [ input [ type_ "checkbox", checked block.active ] 
+            [ input
+                [ type_ "checkbox", checked block.active
+                , onCheck (\b -> BlockListInput block.id <| Active b)
+                ] 
                 [] 
             ]
-        , td [ class "host" ] [ text block.url ]
-        , td [ class "start" ] [ text <| String.fromInt block.start]
-        , td [ class "end" ] [ text <| String.fromInt block.end ]
+        , td (class "host" :: if isContain Url block.error then [ class "error" ] else [])
+            [ input
+                [ type_ "url", value block.url
+                , onInput (\s -> BlockListInput block.id <| Host s)
+                ]
+                []
+            ]
+        , td (class "start" :: if isContain UserPage.Model.Start block.error then [ class "error" ] else [])
+            [ input
+                [ type_ "number", value <| block.start
+                , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.Start s)
+                ]
+                []
+            ]
+        , td (class "end" :: if isContain UserPage.Model.End block.error then [ class "error" ] else [])
+            [ input
+                [ type_ "number", value <| block.end
+                , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.End s)
+                ]
+                []
+            ]
         ]
+
+
+controlView : UserPageModel -> Html UserPageMsg
+controlView model =
+    div [ class "control" ]
+        [ button
+            [ class "add-block", type_ "button", onClick NewBlockAddress ]
+            [ text "追加" ]
+        , button
+            [ class "update", type_ "button", onClick RegistAndUpdateBlocks ]
+            [ text "更新" ]
+        ]
+
+
+-- Func
+
+isContain : a -> List a -> Bool
+isContain a list =
+    List.filter (\x -> x == a) list
+        |> List.length
+        |> (\i -> i > 0)
