@@ -102,6 +102,7 @@ class CreateUser(BaseModel):
             db_u = db.User.create(self.username, self.email,
                                   self.raw_password)
             s.add(db_u)
+            s.commit()
 
             raw_verify_token = db.CreateUserVerify.issue(s, db_u)
             await db.CreateUserVerify.send_email(s, raw_verify_token)
