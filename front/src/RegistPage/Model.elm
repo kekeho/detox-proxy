@@ -1,3 +1,8 @@
+-- Copyright (c) 2021 Hiroki Takemura (kekeho)
+
+-- This software is released under the MIT License.
+-- https://opensource.org/licenses/MIT
+
 module RegistPage.Model exposing (..)
 
 import UserPage.Model exposing (..)

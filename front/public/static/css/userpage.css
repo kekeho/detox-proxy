@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 Hiroki Takemura (kekeho)
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 .content.userpage .blocklist.panel {
     max-width: 45rem;
 }

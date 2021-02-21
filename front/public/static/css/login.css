@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 Hiroki Takemura (kekeho)
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 .content.loginpage {
     display: flex;
     justify-content: center;
