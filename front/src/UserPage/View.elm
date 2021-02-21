@@ -1,10 +1,12 @@
 module UserPage.View exposing (..)
 
-import UserPage.UserPage exposing (UserPageMsg)
 import UserPage.Model exposing (..)
+import UserPage.UserPage exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
+import Html.Events exposing (onCheck)
 
 
 view : UserPageModel -> (String, List (Html UserPageMsg))
@@ -48,13 +50,31 @@ blockRowView : BlockAddress -> Html UserPageMsg
 blockRowView block =
     tr [ class "block-row" ]
         [ td [ class "active" ]
-            [ input [ type_ "checkbox", checked block.active ] 
+            [ input
+                [ type_ "checkbox", checked block.active
+                , onCheck (\b -> BlockListInput block.id <| Active b)
+                ] 
                 [] 
             ]
         , td [ class "host" ]
-            [ input [ type_ "url", value block.url ] [] ]
+            [ input
+                [ type_ "url", value block.url
+                , onInput (\s -> BlockListInput block.id <| Host s)
+                ]
+                []
+            ]
         , td [ class "start" ]
-            [ input [ type_ "number", value <| String.fromInt block.start ] [] ]
+            [ input
+                [ type_ "number", value <| block.start
+                , onInput (\s -> BlockListInput block.id <| Start s)
+                ]
+                []
+            ]
         , td [ class "end" ]
-            [ input [ type_ "number", value <| String.fromInt block.end ] [] ]
+            [ input
+                [ type_ "number", value <| block.end
+                , onInput (\s -> BlockListInput block.id <| End s)
+                ]
+                []
+            ]
         ]

@@ -21,8 +21,8 @@ type alias User =
 type alias BlockAddress =
     { id : Int
     , url : String
-    , start : Int
-    , end : Int
+    , start : String
+    , end : String
     , active : Bool
     }
 
@@ -52,6 +52,6 @@ blockAddressDecoder =
     D.map5 BlockAddress
         (D.field "id" D.int)
         (D.field "url" D.string)
-        (D.field "start" D.int)
-        (D.field "end" D.int)
+        (D.field "start" (D.map String.fromInt D.int))
+        (D.field "end" (D.map String.fromInt D.int))
         (D.field "active" D.bool)

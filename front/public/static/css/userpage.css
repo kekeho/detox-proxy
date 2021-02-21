@@ -1,3 +1,8 @@
+.content.userpage .blocklist.panel {
+    max-width: 45rem;
+}
+
+
 .content.userpage .blocklist.panel .blocklist-container {
     width: 100%;
     overflow-x: scroll;
