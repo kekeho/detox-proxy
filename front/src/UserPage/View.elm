@@ -22,9 +22,7 @@ blockListPanelView model =
         [ h1 [] [ text "ブロックリスト" ]
         , div [ class "blocklist-container" ]
             [ blockListView model 
-            , button
-                [ class "add-block", type_ "button", onClick NewBlockAddress ]
-                [ text "追加" ]
+            , controlView model
             ]
         ]
 
@@ -59,25 +57,46 @@ blockRowView block =
                 ] 
                 [] 
             ]
-        , td [ class "host" ]
+        , td (class "host" :: if isContain Url block.error then [ class "error" ] else [])
             [ input
                 [ type_ "url", value block.url
                 , onInput (\s -> BlockListInput block.id <| Host s)
                 ]
                 []
             ]
-        , td [ class "start" ]
+        , td (class "start" :: if isContain UserPage.Model.Start block.error then [ class "error" ] else [])
             [ input
                 [ type_ "number", value <| block.start
-                , onInput (\s -> BlockListInput block.id <| Start s)
+                , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.Start s)
                 ]
                 []
             ]
-        , td [ class "end" ]
+        , td (class "end" :: if isContain UserPage.Model.End block.error then [ class "error" ] else [])
             [ input
                 [ type_ "number", value <| block.end
-                , onInput (\s -> BlockListInput block.id <| End s)
+                , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.End s)
                 ]
                 []
             ]
         ]
+
+
+controlView : UserPageModel -> Html UserPageMsg
+controlView model =
+    div [ class "control" ]
+        [ button
+            [ class "add-block", type_ "button", onClick NewBlockAddress ]
+            [ text "追加" ]
+        , button
+            [ class "update", type_ "button", onClick RegistNewBlocks ]
+            [ text "更新" ]
+        ]
+
+
+-- Func
+
+isContain : a -> List a -> Bool
+isContain a list =
+    List.filter (\x -> x == a) list
+        |> List.length
+        |> (\i -> i > 0)

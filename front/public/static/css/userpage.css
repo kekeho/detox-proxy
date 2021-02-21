@@ -41,3 +41,9 @@
 .content.userpage td input[type="number"] {
     text-align: right;
 }
+
+
+.content.userpage td.error {
+    border: solid 2px #c02727;
+    outline-offset: -2px;
+}

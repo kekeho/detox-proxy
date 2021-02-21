@@ -1,7 +1,9 @@
 module UserPage.UserPage exposing (..)
 
 import Http
+import Json.Encode as E
 import UserPage.Model exposing (..)
+import List
 
 
 
@@ -17,6 +19,8 @@ type UserPageMsg
     | GotLoginUserInfo (Result Http.Error User)
     | BlockListInput BlockId BlockListInputType
     | NewBlockAddress
+    | RegistNewBlocks
+    | GotRegistNewBlockResult (Result Http.Error ())
 
 
 update : UserPageMsg -> UserPageModel -> (UserPageModel, Cmd UserPageMsg)
@@ -107,6 +111,64 @@ update msg model =
             ( { model | blockPanel = model.blockPanel ++ [newBlockAddress tempId] }
             , Cmd.none
             )
+        
+        RegistNewBlocks ->
+            let
+                normalized =
+                    List.map normalize model.blockPanel
+                error =
+                    List.filter
+                        ( \x ->
+                            case x of
+                                Err _ ->
+                                    True
+                                
+                                Ok _ ->
+                                    False
+                        )
+                        normalized
+            in
+            case error of
+                [] ->
+                    let
+                        success =
+                            List.map Result.toMaybe normalized
+                                |> List.filterMap (\x -> x)
+                        new =
+                            List.filter
+                                (\x ->
+                                    case x.id of
+                                        New _ -> True
+                                        Id _ -> False
+                                )
+                                success
+                    in
+                    ( model
+                    , registNewBlockAddress new
+                    )
+                _ ->
+                    let
+                        blockPanel =
+                                List.map2
+                                    (\nb b ->
+                                        case nb of
+                                            Ok _ ->
+                                                b
+                                            Err e ->
+                                                { b | error = e }
+                                    )
+                                    normalized
+                                    model.blockPanel
+                    in
+                    ( { model | blockPanel = blockPanel }
+                    , Cmd.none
+                    )
+
+        _ ->
+            ( model
+            , Cmd.none
+            )
+            
 
 
 
@@ -117,4 +179,13 @@ getLoginUserInfo =
     Http.get
         { url = "/api/user"
         , expect = Http.expectJson GotLoginUserInfo userDecoder
+        }
+
+
+registNewBlockAddress : List NormalizedBlockAddress -> Cmd UserPageMsg
+registNewBlockAddress blockList =
+    Http.post
+        { url = "/api/user/blockaddress"
+        , body = Http.jsonBody (E.list blockAddressEncoder blockList)
+        , expect = Http.expectWhatever GotRegistNewBlockResult
         }
