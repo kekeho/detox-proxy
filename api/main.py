@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from typing import Optional
+from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Response
 from fastapi import status
 from fastapi.params import Cookie
@@ -154,14 +154,18 @@ async def get_loginuser_info(token: Optional[str] = Cookie(None)):
         },
     },
 )
-async def set_block_address(block_create: schema.BlockCreate,
+async def set_block_address(block_create_list: List[schema.BlockCreate],
                             token: Optional[str] = Cookie(None)):
     if token is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
+    results = []
     with db.session_scope() as s:
         u = db.Token.get_user(s, token)
         if u is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
-        return block_create.create(s, u)
+        results = [b.create(s, u) for b in block_create_list]
+        s.commit()
+
+    return results

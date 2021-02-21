@@ -18,8 +18,13 @@ type alias User =
     }
 
 
+type BlockId
+    = Id Int
+    | New Int
+
+
 type alias BlockAddress =
-    { id : Int
+    { id : BlockId
     , url : String
     , start : String
     , end : String
@@ -36,6 +41,11 @@ initUserPageModel =
         []
 
 
+newBlockAddress : Int -> BlockAddress
+newBlockAddress tempId =
+    BlockAddress (New tempId) "" "5" "10" True
+
+
 -- Decoder
 
 userDecoder : D.Decoder User
@@ -50,7 +60,7 @@ userDecoder =
 blockAddressDecoder : D.Decoder BlockAddress
 blockAddressDecoder =
     D.map5 BlockAddress
-        (D.field "id" D.int)
+        (D.field "id" (D.map (Id) D.int))
         (D.field "url" D.string)
         (D.field "start" (D.map String.fromInt D.int))
         (D.field "end" (D.map String.fromInt D.int))

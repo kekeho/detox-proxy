@@ -15,8 +15,8 @@ type BlockListInputType
 type UserPageMsg
     = GetLoginUserInfo
     | GotLoginUserInfo (Result Http.Error User)
-    | BlockListInput Int BlockListInputType
-
+    | BlockListInput BlockId BlockListInputType
+    | NewBlockAddress
 
 
 update : UserPageMsg -> UserPageModel -> (UserPageModel, Cmd UserPageMsg)
@@ -99,6 +99,14 @@ update msg model =
                     ( { model | blockPanel = blockList }
                     , Cmd.none
                     )
+
+        NewBlockAddress ->
+            let
+                tempId = (List.length model.blockPanel)
+            in
+            ( { model | blockPanel = model.blockPanel ++ [newBlockAddress tempId] }
+            , Cmd.none
+            )
 
 
 

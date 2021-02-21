@@ -5,8 +5,7 @@ import UserPage.UserPage exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
-import Html.Events exposing (onCheck)
+import Html.Events exposing (..)
 
 
 view : UserPageModel -> (String, List (Html UserPageMsg))
@@ -22,7 +21,11 @@ blockListPanelView model =
     div [ class "blocklist panel" ]
         [ h1 [] [ text "ブロックリスト" ]
         , div [ class "blocklist-container" ]
-            [ blockListView model ]
+            [ blockListView model 
+            , button
+                [ class "add-block", type_ "button", onClick NewBlockAddress ]
+                [ text "追加" ]
+            ]
         ]
 
 
