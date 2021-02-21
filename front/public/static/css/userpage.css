@@ -15,9 +15,44 @@
     overflow-x: scroll;
 }
 
-.content.userpage table.block-list {
+.content.userpage table {
     width: 100%;
-    min-width: 25rem;
+    /* min-width: 25rem; */
+}
+
+
+.content.userpage .block-row {
+    display: flex;
+    padding: 0 1rem;
+}
+
+.content.userpage .block-row button {
+    margin: 14px 1rem 14px 0;
+    width: 48px;
+    height: 48px;
+
+    border-radius: 15px;
+    box-shadow: var(--panel-boxshadow);
+
+    border: none;
+}
+
+.content.userpage .block-row button.active {
+    box-shadow: var(--inset-boxshadow);
+    background-image: url("/static/img/checkmark.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+
+.content.userpage .block-row table {
+    border-radius: 15px;
+    box-shadow: var(--panel-boxshadow);
+    background-color: var(--bg-color);
+
+    margin: 14px 0 !important;
+    height: 48px;
 }
 
 
@@ -33,8 +68,16 @@
     width: 5rem;
 }
 
+.content.userpage table {
+    padding: 10px 6px ;
+    margin: 0;
+    width: 100%;
+}
+
 .content.userpage td {
     text-align: center;
+    padding: 0 .5rem;
+    margin: 0;
 }
 
 .content.userpage td input {
@@ -43,6 +86,14 @@
     padding: 0;
     width: 100%;
     font-size: 1.25rem;
+
+    background-color: inherit;
+
+    padding-bottom: 3px;
+}
+
+.content.userpage td.bold input {
+    font-weight: 600;
 }
 
 .content.userpage td input[type="number"] {
@@ -53,4 +104,62 @@
 .content.userpage td.error {
     border: solid 2px #c02727;
     outline-offset: -2px;
+}
+
+
+.content.userpage .control {
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+.content.userpage .control button {
+    width: fit-content;
+    font-size: 1.2rem;
+
+    display: inline;
+    padding: .1rem .7rem;
+    margin: 0 .25rem;
+
+    border-radius: .8rem;
+    background-color: inherit;
+}
+
+
+.content.userpage .control button.update {
+    border: solid 1px #ffffff;
+    background-color: var(--key-color);
+    color: #ffffff;
+}
+
+.content.userpage .control button.add-block {
+    border: solid 3px #838383;
+    color: var(--key-color);
+}
+
+
+@media screen and (max-width: 480px) {
+    .content.userpage th {
+        font-size: .9rem;
+    }
+    .content.userpage td input {
+        font-size: .9rem;
+    }
+
+    .content.userpage .block-row {
+        padding: 0 1rem;
+    }
+
+    .content.userpage .blocklist.panel .blocklist-container {
+        margin: 0 -1rem;
+        width: calc(100% + 2rem);
+    }
+
+    .content.userpage col.start {
+        width: 2.2rem;
+    }
+    
+    .content.userpage col.end {
+        width: 2.2rem;
+    }
 }

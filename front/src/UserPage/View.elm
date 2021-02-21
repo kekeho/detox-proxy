@@ -25,7 +25,7 @@ blockListPanelView : UserPageModel -> Html UserPageMsg
 blockListPanelView model =
     div [ class "blocklist panel" ]
         [ h1 [] [ text "ブロックリスト" ]
-        , div [ class "blocklist-container" ]
+        , div [ ]
             [ blockListView model 
             , controlView model
             ]
@@ -34,54 +34,57 @@ blockListPanelView model =
 
 blockListView : UserPageModel -> Html UserPageMsg
 blockListView model =
-    table [ class "block-list" ]
-        [ col [ class "active" ] []
-        , col [ class "host" ] []
-        , col [ class "start" ] []
-        , col [ class "end" ] []
-        , thead []
-            [ tr [] 
-                [ th [] [ text "ON" ]
-                , th [] [ text "Host" ]
-                , th [] [ text "遮断 [分]" ]
-                , th [] [ text "再開 [分]" ]
+    div [ class "blocklist-container" ]
+        [ table [ class "block-list" ]
+            [ col [ class "host" ] []
+            , col [ class "start" ] []
+            , col [ class "end" ] []
+            , thead []
+                [ tr [] 
+                    [ th [] [ text "Host" ]
+                    , th [] [ text "遮断 [分]" ]
+                    , th [] [ text "再開 [分]" ]
+                    ]
                 ]
             ]
-        , tbody []
+        , div [ class "body" ]
             <| List.map blockRowView model.blockPanel
         ]
 
 
 blockRowView : BlockAddress -> Html UserPageMsg
 blockRowView block =
-    tr [ class "block-row" ]
-        [ td [ class "active" ]
-            [ input
-                [ type_ "checkbox", checked block.active
-                , onCheck (\b -> BlockListInput block.id <| Active b)
-                ] 
-                [] 
+    div [ class "block-row" ]
+        [ button 
+            [ onClick (BlockListInput block.id <| Active <| not block.active) 
+            , class <| if block.active then "active" else ""
             ]
-        , td (class "host" :: if isContain Url block.error then [ class "error" ] else [])
-            [ input
-                [ type_ "url", value block.url
-                , onInput (\s -> BlockListInput block.id <| Host s)
+            []
+        , table [ ]
+            [ col [ class "host" ] []
+            , col [ class "start" ] []
+            , col [ class "end" ] []
+            , td (class "host bold" :: if isContain Url block.error then [ class "error" ] else [])
+                [ input
+                    [ type_ "url", value block.url
+                    , onInput (\s -> BlockListInput block.id <| Host s)
+                    ]
+                    []
                 ]
-                []
-            ]
-        , td (class "start" :: if isContain UserPage.Model.Start block.error then [ class "error" ] else [])
-            [ input
-                [ type_ "number", value <| block.start
-                , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.Start s)
+            , td (class "start" :: if isContain UserPage.Model.Start block.error then [ class "error" ] else [])
+                [ input
+                    [ type_ "number", value <| block.start
+                    , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.Start s)
+                    ]
+                    []
                 ]
-                []
-            ]
-        , td (class "end" :: if isContain UserPage.Model.End block.error then [ class "error" ] else [])
-            [ input
-                [ type_ "number", value <| block.end
-                , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.End s)
+            , td (class "end" :: if isContain UserPage.Model.End block.error then [ class "error" ] else [])
+                [ input
+                    [ type_ "number", value <| block.end
+                    , onInput (\s -> BlockListInput block.id <| UserPage.UserPage.End s)
+                    ]
+                    []
                 ]
-                []
             ]
         ]
 
@@ -90,10 +93,10 @@ controlView : UserPageModel -> Html UserPageMsg
 controlView model =
     div [ class "control" ]
         [ button
-            [ class "add-block", type_ "button", onClick NewBlockAddress ]
+            [ class "add-block", onClick NewBlockAddress ]
             [ text "追加" ]
         , button
-            [ class "update", type_ "button", onClick RegistAndUpdateBlocks ]
+            [ class "update", onClick RegistAndUpdateBlocks ]
             [ text "更新" ]
         ]
 

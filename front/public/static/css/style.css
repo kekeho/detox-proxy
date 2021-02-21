@@ -15,7 +15,13 @@
 
     --panel-boxshadow:
         .5rem .5rem 1rem #d3d3d3,
-        -.5rem -.5rem .8rem #ffffff;
+        -.5rem -.5rem .5rem #ffffff;
+    
+    --inset-boxshadow:
+        inset .5rem .5rem .5rem #d3d3d3,
+        inset -.5rem -.5rem .5rem #ffffff;
+    
+    --simple-border: solid 1px #1a1a1a;
 }
 
 body {
@@ -54,6 +60,15 @@ body {
     header .logo {
         font-size: 2rem;
     }
+}
+
+
+button:focus {
+    outline: none;
+}
+
+input:focus {
+    outline: none;
 }
 
 
@@ -141,8 +156,21 @@ footer .logo {
 
 /* GENERAL */
 
+
+@media screen and (min-width: 480px) {
+    .panel {
+        padding: 2rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .panel {
+        padding: 1rem;
+    }
+}
+
+
 .panel {
-    padding: 1rem;
     margin: 1rem;
     border-radius: 2rem;
     box-shadow: var(--panel-boxshadow);
@@ -156,6 +184,7 @@ footer .logo {
 
 
 .panel h1 {
+    font-weight: 800;
     margin-top: 0;
 }
 
@@ -188,7 +217,7 @@ footer .logo {
     border: none;
     padding: 0;
     background-color: var(--bg-color);
-    border-bottom: solid 1px #1a1a1a;
+    border-bottom: var(--simple-border)
 }
 
 
@@ -202,4 +231,9 @@ footer .logo {
 
     display: inline;
     padding: .1rem .7rem;
+}
+
+
+.text-left {
+    text-align: left;
 }
