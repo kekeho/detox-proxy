@@ -17,7 +17,15 @@ update msg model =
             ( model, getLoginUserInfo )
         
         GotLoginUserInfo result ->
-            ( { model | user = Just result }
+            let
+                blockPanel = 
+                    case result of
+                        Ok u ->
+                            u.block
+                        Err _ ->
+                            []
+            in
+            ( { model | user = Just result, blockPanel = blockPanel }
             , Cmd.none
             )
                 

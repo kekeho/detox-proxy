@@ -7,36 +7,40 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
-view : User -> UserPageModel -> (String, List (Html UserPageMsg))
-view user model =
+view : UserPageModel -> (String, List (Html UserPageMsg))
+view model =
     ( "userpage"
-    , [ blockListPanelView user model
+    , [ blockListPanelView model
       ]
     )
 
 
-blockListPanelView : User -> UserPageModel -> Html UserPageMsg
-blockListPanelView user model =
+blockListPanelView : UserPageModel -> Html UserPageMsg
+blockListPanelView model =
     div [ class "blocklist panel" ]
         [ h1 [] [ text "ブロックリスト" ]
-        , blockListView user model
+        , div [ class "blocklist-container" ]
+            [ blockListView model ]
         ]
 
 
-blockListView : User -> UserPageModel -> Html UserPageMsg
-blockListView user model =
+blockListView : UserPageModel -> Html UserPageMsg
+blockListView model =
     table [ class "block-list" ]
-        [ thead []
+        [ col [ class "active" ] []
+        , col [ class "host" ] []
+        , col [ class "start" ] []
+        , col [ class "end" ] []
+        , thead []
             [ tr [] 
-                [ th [] [ text "Active" ]
+                [ th [] [ text "ON" ]
                 , th [] [ text "Host" ]
-                , th [] [ text "遮断" ]
-                , th [] [ text "再開" ]
-                ] 
+                , th [] [ text "遮断 [分]" ]
+                , th [] [ text "再開 [分]" ]
+                ]
             ]
-
         , tbody []
-            <| List.map blockRowView user.block
+            <| List.map blockRowView model.blockPanel
         ]
 
 
@@ -47,7 +51,10 @@ blockRowView block =
             [ input [ type_ "checkbox", checked block.active ] 
                 [] 
             ]
-        , td [ class "host" ] [ text block.url ]
-        , td [ class "start" ] [ text <| String.fromInt block.start]
-        , td [ class "end" ] [ text <| String.fromInt block.end ]
+        , td [ class "host" ]
+            [ input [ type_ "url", value block.url ] [] ]
+        , td [ class "start" ]
+            [ input [ type_ "number", value <| String.fromInt block.start ] [] ]
+        , td [ class "end" ]
+            [ input [ type_ "number", value <| String.fromInt block.end ] [] ]
         ]

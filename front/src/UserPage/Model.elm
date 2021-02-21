@@ -6,6 +6,7 @@ import Http
 
 type alias UserPageModel =
     { user : Maybe (Result Http.Error User)
+    , blockPanel : List BlockAddress
     }
 
 
@@ -30,7 +31,9 @@ type alias BlockAddress =
 
 initUserPageModel : UserPageModel
 initUserPageModel =
-    UserPageModel Nothing
+    UserPageModel
+        Nothing
+        []
 
 
 -- Decoder

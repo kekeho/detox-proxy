@@ -112,8 +112,8 @@ view model =
             case (Url.Parser.parse Model.routeParser model.url) of
                 Just IndexPage ->
                     case model.userPage.user of
-                        Just (Ok u) ->
-                            UserPage.View.view u model.userPage
+                        Just (Ok _) ->
+                            UserPage.View.view model.userPage
                                 |> map UserPageMsg
                         _ ->
                             IndexPage.View.view

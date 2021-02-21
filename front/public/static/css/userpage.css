@@ -1,15 +1,38 @@
-.content.userpage table {
+.content.userpage .blocklist.panel .blocklist-container {
     width: 100%;
+    overflow-x: scroll;
 }
 
-.content.userpage .block-list .block-row .active {
-    width: 2rem;
+.content.userpage table.block-list {
+    width: 100%;
+    min-width: 25rem;
 }
 
-.content.userpage .block-list .block-row .start {
-    width: 6rem;
+
+.content.userpage col.active {
+    width: 1rem;
 }
 
-.content.userpage .block-list .block-row .end {
-    width: 6rem;
+.content.userpage col.start {
+    width: 5rem;
+}
+
+.content.userpage col.end {
+    width: 5rem;
+}
+
+.content.userpage td {
+    text-align: center;
+}
+
+.content.userpage td input {
+    margin: 0;
+    border: none;
+    padding: 0;
+    width: 100%;
+    font-size: 1.25rem;
+}
+
+.content.userpage td input[type="number"] {
+    text-align: right;
 }
