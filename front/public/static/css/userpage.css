@@ -26,23 +26,45 @@
     padding: 0 1rem;
 }
 
-.content.userpage .block-row button {
-    margin: 14px 1rem 14px 0;
-    width: 48px;
-    height: 48px;
 
-    border-radius: 15px;
-    box-shadow: var(--panel-boxshadow);
+.content.userpage .block-row button {
+    width: 36px;
+    height: 36px;
+    border: none;
+}
+
+.content.userpage .block-row button.delete {
+    background-image: url("/static/img/delete.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+
+
+.content.userpage .block-row button.on-off {
+    /* margin: 14px 1rem 14px 0; */
+    width: 36px;
+    height: 36px;
+
+    border-radius: 12px;
+    box-shadow:
+        .5rem .5rem 1.5rem #c5c5c5,
+        -.5rem -.5rem .5rem #ffffff;
+    background-color: #d6d6d6;
 
     border: none;
 }
 
-.content.userpage .block-row button.active {
-    box-shadow: var(--inset-boxshadow);
-    background-image: url("/static/img/checkmark.svg");
+.content.userpage .block-row button.on-off.active {
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+
+    box-shadow:
+        inset .5rem .5rem .5rem #73b888,
+        inset -.5rem -.5rem .5rem #9bfab8;
+    background-color: #87d9a0;
 }
 
 
@@ -52,7 +74,14 @@
     background-color: var(--bg-color);
 
     margin: 14px 0 !important;
-    height: 48px;
+}
+
+.content.userpage .block-row table td {
+    vertical-align: middle;
+}
+
+.content.userpage  table.block-list {
+    padding: 0 calc(1rem + 10px);
 }
 
 
@@ -66,6 +95,10 @@
 
 .content.userpage col.end {
     width: 5rem;
+}
+
+.content.userpage col.delete {
+    width: 1rem;
 }
 
 .content.userpage table {

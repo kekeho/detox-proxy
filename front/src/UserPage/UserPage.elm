@@ -17,6 +17,7 @@ type BlockListInputType
     | Host String
     | Start String
     | End String
+    | Delete
 
 
 type UserPageMsg
@@ -102,6 +103,21 @@ update msg model =
                                     (\b -> 
                                         if b.id == blockId 
                                             then { b | id = updateOrNew b.id, end = endMin } 
+                                            else b
+                                    )
+                    in
+                    ( { model | blockPanel = blockList }
+                    , Cmd.none
+                    )
+                
+                Delete ->
+                    let
+                        blockList =
+                            model.blockPanel
+                                |> List.map
+                                    (\b ->
+                                        if b.id == blockId
+                                            then { b | id = UserPage.Model.Delete <| blockIdVal b.id }
                                             else b
                                     )
                     in

@@ -28,6 +28,7 @@ type BlockId
     = Id Int
     | New Int
     | Update Int
+    | Delete Int
 
 
 type ErrorCol
@@ -103,6 +104,8 @@ blockIdVal b =
             i
         Update i ->
             i
+        Delete i ->
+            i
 
 
 updateOrNew : BlockId -> BlockId
@@ -150,6 +153,19 @@ isUpdateBlockAddress b =
     case b.id of
         Update _ -> True
         _ -> False
+
+
+notDelBlockFilter : List BlockAddress -> List BlockAddress
+notDelBlockFilter blockList =
+    List.filter
+        (\b ->
+            case b.id of
+                Delete _ ->
+                    False
+                _ ->
+                    True
+        )
+        blockList
 
 
 -- Decoder

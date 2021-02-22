@@ -36,34 +36,43 @@ blockListView : UserPageModel -> Html UserPageMsg
 blockListView model =
     div [ class "blocklist-container" ]
         [ table [ class "block-list" ]
-            [ col [ class "host" ] []
+            [ col [ class "active" ] []
+            , col [ class "host" ] []
             , col [ class "start" ] []
             , col [ class "end" ] []
+            , col [ class "delete" ] []
             , thead []
                 [ tr [] 
-                    [ th [] [ text "Host" ]
+                    [ th [] [ text "ON" ]
+                    , th [] [ text "Host" ]
                     , th [] [ text "遮断 [分]" ]
                     , th [] [ text "再開 [分]" ]
+                    , th [] [ text "削除" ]
                     ]
                 ]
             ]
-        , div [ class "body" ]
-            <| List.map blockRowView model.blockPanel
+        , model.blockPanel
+            |> notDelBlockFilter
+            |> List.map blockRowView
+            |> div [ class "body" ]
         ]
 
 
 blockRowView : BlockAddress -> Html UserPageMsg
 blockRowView block =
     div [ class "block-row" ]
-        [ button 
-            [ onClick (BlockListInput block.id <| Active <| not block.active) 
-            , class <| if block.active then "active" else ""
-            ]
-            []
-        , table [ ]
-            [ col [ class "host" ] []
+        [ table [ ]
+            [ col [ class "active" ] []
+            , col [ class "host" ] []
             , col [ class "start" ] []
             , col [ class "end" ] []
+            , col [ class "delete" ] []
+            , button 
+                [ onClick (BlockListInput block.id <| Active <| not block.active) 
+                , class <| if block.active then "active" else ""
+                , class "on-off"
+                ]
+                []
             , td (class "host bold" :: if isContain Url block.error then [ class "error" ] else [])
                 [ input
                     [ type_ "url", value block.url
@@ -85,6 +94,11 @@ blockRowView block =
                     ]
                     []
                 ]
+            ,  button 
+                [ onClick (BlockListInput block.id <| UserPage.UserPage.Delete)
+                , class "delete"
+                ]
+                []
             ]
         ]
 
