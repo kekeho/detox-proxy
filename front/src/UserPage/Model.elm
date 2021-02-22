@@ -168,6 +168,19 @@ notDelBlockFilter blockList =
         blockList
 
 
+delBlockFilter : List BlockAddress -> List BlockAddress
+delBlockFilter blockList =
+    List.filter
+        (\b ->
+            case b.id of
+                Delete _ ->
+                    True
+                _ ->
+                    False
+        )
+        blockList
+
+
 -- Decoder
 
 userDecoder : D.Decoder User

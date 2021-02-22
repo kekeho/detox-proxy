@@ -27,6 +27,7 @@ type UserPageMsg
     | NewBlockAddress
     | RegistAndUpdateBlocks
     | GotRegistNewBlockResult (Result Http.Error ())
+    | GotDeleteBlockResult (Result Http.Error ())
 
 
 update : UserPageMsg -> UserPageModel -> (UserPageModel, Cmd UserPageMsg)
@@ -160,6 +161,10 @@ update msg model =
                     , Cmd.batch
                         [ registNewBlockAddress <| newBlockAddressList success
                         , updateBlockAddress <| updateBlockAddressList success
+                        , model.blockPanel
+                            |> delBlockFilter
+                            |> List.map (\b -> blockIdVal b.id)
+                            |> deleteBlockAddress
                         ]
                     )
                 _ ->
@@ -181,6 +186,13 @@ update msg model =
                     )
 
         GotRegistNewBlockResult result ->
+            -- TODO: エラー処理
+            ( model
+            , getLoginUserInfo  -- update
+            )
+
+
+        GotDeleteBlockResult result ->
             -- TODO: エラー処理
             ( model
             , getLoginUserInfo  -- update
@@ -215,6 +227,19 @@ updateBlockAddress blockList =
         , url = "/api/user/blockaddress"
         , body = Http.jsonBody (E.list updateBlockAddressEncoder blockList)
         , expect = Http.expectWhatever GotRegistNewBlockResult
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+deleteBlockAddress : List Int -> Cmd UserPageMsg
+deleteBlockAddress blockList =
+    Http.request
+        { method = "DELETE"
+        , headers = []
+        , url = "/api/user/blockaddress"
+        , body = Http.jsonBody (E.list E.int blockList)
+        , expect = Http.expectWhatever GotDeleteBlockResult
         , timeout = Nothing
         , tracker = Nothing
         }
