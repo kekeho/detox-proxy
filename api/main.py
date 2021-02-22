@@ -7,6 +7,7 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Response
 from fastapi import status
 from fastapi.params import Cookie
+from starlette.status import HTTP_403_FORBIDDEN
 
 import schema
 import db
@@ -179,10 +180,58 @@ async def set_block_address(block_create_list: List[schema.BlockCreate],
         status.HTTP_200_OK: {
             'model': List[schema.Block]
         },
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'token is required'
+        },
         status.HTTP_404_NOT_FOUND: {
             'description': 'display not found'
-        }
+        },
     },
 )
-async def update_block_address(update_list: List[schema.Block]):
+async def update_block_address(update_list: List[schema.Block],
+                               token: Optional[str] = Cookie(None)):
+    if token is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    with db.session_scope() as s:
+        u = db.Token.get_user(s, token)
+        if u is None:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
     return [x.update() for x in update_list]
+
+
+@app.delete(
+    '/api/user/blockaddress',
+    description='Delete block address',
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_200_OK: {
+            'description': 'Successful response'
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Forbidden'
+        },
+        status.HTTP_404_NOT_FOUND: {
+            'description': 'Block Address not found',
+        },
+    },
+)
+async def delete_block_address(delete_list: List[int],
+                               token: Optional[str] = Cookie(None)):
+    if token is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    with db.session_scope() as s:
+        u = db.Token.get_user(s, token)
+        if u is None:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+        for del_id in delete_list:
+            d = s.query(db.Block).get(del_id)
+            if d.user != u.id:
+                raise HTTPException(status.HTTP_403_FORBIDDEN)
+            if d is None:
+                raise HTTPException(status.HTTP_404_NOT_FOUND)
+            s.delete(d)
+        s.commit()
+
+    return ""
