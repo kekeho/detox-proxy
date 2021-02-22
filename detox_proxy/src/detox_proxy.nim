@@ -13,6 +13,9 @@ import http
 import times
 
 
+let ctx = newContext(certFile="cert.pem", keyFile="key.pem")
+
+
 type
     Connection = ref object
         a: AsyncSocket
@@ -85,7 +88,16 @@ proc relay(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
             return
 
 proc processClient(client: AsyncSocket) {.async.} =
-    let data = await client.recv(1024)
+    echo "New proxy connection"
+
+    var data: string
+    try:
+        data = await client.recv(1024)
+    except SslError:
+        echo "SSL ERROR"
+        client.close()
+        return
+
     if data.len == 0:
         echo "LEN"
         return
@@ -152,6 +164,7 @@ proc processClient(client: AsyncSocket) {.async.} =
 
 proc serve() {.async.} =
     var server = newAsyncSocket(buffered=false, domain=AF_INET6)
+    ctx.wrapSocket(server)
     server.setSockOpt(OptReuseAddr, true)
     server.setSockOpt(OptReusePort, true)
     server.bindAddr(Port(5001), "0.0.0.0")
@@ -159,7 +172,17 @@ proc serve() {.async.} =
 
     while true:
         let client = await server.accept()
-        asyncCheck processClient(client)
+        try:
+            # handshake to client
+            ctx.wrapConnectedSocket(client, handshakeAsServer)
+            if not client.isSsl:
+                client.close()
+        except SslError:
+            echo "SSL Handshake failed"
+            client.close()
+
+        if not client.isClosed:
+            asyncCheck processClient(client)
 
 
 when isMainModule:

@@ -15,6 +15,10 @@ services:
       - 5001:5001
     depends_on:
       - api
+    volumes:
+      - ./detox_proxy/cert.pem:/code/cert.pem
+      - ./detox_proxy/key.pem:/code/key.pem
+
 
   api:
     build: api
