@@ -11,9 +11,35 @@ import options
 import net
 import http
 import times
+import docopt
 
 
 let ctx = newContext(certFile="cert.crt", keyFile="cert.key")
+
+const VERSION = "0.1.0"
+const DOC = """
+　   _      _                                            
+  __| | ___| |_ _____  __     _ __  _ __ _____  ___   _  
+ / _` |/ _ \ __/ _ \ \/ /____| '_ \| '__/ _ \ \/ / | | | 
+| (_| |  __/ || (_) >  <_____| |_) | | | (_) >  <| |_| | 
+ \__,_|\___|\__\___/_/\_\    | .__/|_|  \___/_/\_\\__, | 
+                             |_|                  |___/ 
+
+detox_proxy
+Copyright: Hiroki Takemura (kekeho) All Rights Reserved.
+
+Usage:
+    detox_proxy http
+    detox_proxy https
+
+Command:
+    http: http proxy
+    https: https proxy
+
+Options:
+    -h --help       Show this help
+    -v --version    Show version info
+"""
 
 
 type
@@ -186,6 +212,10 @@ proc serve() {.async.} =
 
 
 when isMainModule:
-    asyncCheck serve()
-    asyncCheck connwatch()
-    runForever()
+    let args = docopt(DOC, version=VERSION)
+    if args["http"]:
+        discard
+    elif args["https"]:
+        asyncCheck serve()
+        asyncCheck connwatch()
+        runForever()
