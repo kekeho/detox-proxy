@@ -20,6 +20,7 @@ RUN cp elm /usr/local/bin/elm
 
 RUN mkdir /code
 RUN mkdir /public
+RUN mkdir /cert
 COPY ./src /code/src
 COPY ./elm.json /code
 

@@ -13,7 +13,7 @@ import http
 import times
 
 
-let ctx = newContext(certFile="cert.pem", keyFile="key.pem")
+let ctx = newContext(certFile="cert.crt", keyFile="cert.key")
 
 
 type

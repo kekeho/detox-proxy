@@ -1,2 +1,4 @@
 elm-stuff/
 public/static/js/elm.js
+cert.crt
+cert.key
