@@ -5,8 +5,7 @@ RUN mkdir /code
 COPY ./ /code
 
 WORKDIR /code
-RUN nimble build
+RUN nimble build -y
 
 EXPOSE 5001
-CMD [ "./detox_proxy" ]
-
+CMD [ "./detox_proxy", "https" ]

@@ -13,7 +13,7 @@ services:
       - ./detox_proxy/cert.key:/cert/cert.key
 
 
-  proxy:
+  httpsproxy:
     build: detox_proxy
     ports:
       - 5001:5001
@@ -22,6 +22,16 @@ services:
     volumes:
       - ./detox_proxy/cert.crt:/code/cert.crt
       - ./detox_proxy/cert.key:/code/cert.key
+    command: ./detox_proxy https
+
+
+  httpproxy:
+    build: detox_proxy
+    ports:
+      - 5000:5000
+    depends_on:
+      - api
+    command: ./detox_proxy http
 
 
   api:
