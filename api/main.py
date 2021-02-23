@@ -7,7 +7,7 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Response
 from fastapi import status
 from fastapi.params import Cookie
-from starlette.status import HTTP_403_FORBIDDEN
+import os
 
 import schema
 import db
@@ -235,3 +235,25 @@ async def delete_block_address(delete_list: List[int],
         s.commit()
 
     return ""
+
+
+# PAC FILE
+
+HOST = os.environ['DETOX_PROXY_HOST']
+pac = f"""function FindProxyForUrl(url, host) {{
+    if (url === host) {{
+        return "DIRECT";
+    }} else {{
+        return "HTTPS {HOST}:5001; HTTP {HOST}:5000; DIRECT";
+    }}
+}}
+"""
+
+
+@app.get(
+    '/proxy.pac',
+    description="Proxy Auto Configuration file"
+)
+async def get_pac():
+    headers = {'Content-Type': 'application/x-ns-proxy-autoconfig'}
+    return Response(pac, headers=headers)

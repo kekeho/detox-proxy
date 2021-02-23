@@ -20,8 +20,7 @@ www.{$HOSTNAME} {
         file_server
     }
 
-    @pac {
-        path "/proxy.pac"
+    route /proxy.pac {
+        reverse_proxy api:8000
     }
-    header @pac Content-Type application/x-ns-proxy-autoconfig
 }
