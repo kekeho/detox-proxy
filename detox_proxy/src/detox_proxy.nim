@@ -7,6 +7,7 @@
 import asyncdispatch
 import docopt
 
+import http
 import https
 import common
 
@@ -39,7 +40,9 @@ Options:
 when isMainModule:
     let args = docopt(DOC, version=VERSION)
     if args["http"]:
-        discard
+        asyncCheck http.serve()
+        asyncCheck connwatch()
+        runForever()
     elif args["https"]:
         asyncCheck https.serve()
         asyncCheck connwatch()
