@@ -241,16 +241,9 @@ async def delete_block_address(delete_list: List[int],
 
 HOST = os.environ['DETOX_PROXY_PROXY_HOST']
 HTTP = os.environ['DETOX_PROXY_PROXY_HTTP_PORT']
-HTTPS = os.environ['DETOX_PROXY_PROXY_HTTPS_PORT']
 
 pac = f"""function FindProxyForURL(url, host) {{
-    if (url === host) {{
-        return "DIRECT";
-    }} else if (shExpMatch(url, "https://*")) {{
-        return "HTTPS {HOST}:{HTTPS}; DIRECT";
-    }} else {{
-        return "HTTP {HOST}:{HTTP}; DIRECT";
-    }}
+    return "HTTP {HOST}:{HTTP}";
 }}
 """
 
