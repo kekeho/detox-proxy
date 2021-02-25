@@ -8,4 +8,4 @@ WORKDIR /code
 RUN nimble build -y
 
 EXPOSE 5001
-CMD [ "./detox_proxy", "https" ]
+CMD [ "./detox_proxy" ]

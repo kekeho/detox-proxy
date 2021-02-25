@@ -7,8 +7,7 @@
 import asyncdispatch
 import docopt
 
-import http
-import https
+import proxy
 import common
 
 
@@ -25,12 +24,7 @@ detox_proxy
 Copyright: Hiroki Takemura (kekeho) All Rights Reserved.
 
 Usage:
-    detox_proxy http
-    detox_proxy https
-
-Command:
-    http: http proxy
-    https: https proxy
+    detox_proxy
 
 Options:
     -h --help       Show this help
@@ -38,12 +32,7 @@ Options:
 """
 
 when isMainModule:
-    let args = docopt(DOC, version=VERSION)
-    if args["http"]:
-        asyncCheck http.serve()
-        asyncCheck connwatch()
-        runForever()
-    elif args["https"]:
-        asyncCheck https.serve()
-        asyncCheck connwatch()
-        runForever()
+    discard docopt(DOC, version=VERSION)
+    asyncCheck proxy.serve()
+    asyncCheck connwatch()
+    runForever()

@@ -7,19 +7,11 @@ import options
 import common
 
 
-let ctx = newContext(certFile="cert.crt", keyFile="cert.key")
-
-
 proc processClient(client: AsyncSocket) {.async.} =
     echo "New proxy connection"
 
     var data: string
-    try:
-        data = await client.recv(1024)
-    except SslError:
-        echo "SSL ERROR"
-        client.close()
-        return
+    data = await client.recv(1024)
 
     if data.len == 0:
         echo "LEN"
@@ -71,8 +63,12 @@ proc processClient(client: AsyncSocket) {.async.} =
         safeClose(host, client)
         return
 
-    await client.send("HTTP/1.1 200 Connection ESTABLISHED\c\n\c\n")
-
+    if req.reqMethod == HttpMethod.Connect:
+        await client.send("HTTP/1.1 200 Connection ESTABLISHED\c\n\c\n")
+    else:
+        if host.isClosed or client.isClosed:
+            safeClose(host, client)
+        await host.send(data)
 
     asyncCheck relay(client, host)
     asyncCheck relay(host, client)
@@ -81,7 +77,6 @@ proc processClient(client: AsyncSocket) {.async.} =
 
 proc serve*() {.async.} =
     var server = newAsyncSocket(buffered=false, domain=AF_INET6)
-    ctx.wrapSocket(server)
     server.setSockOpt(OptReuseAddr, true)
     server.setSockOpt(OptReusePort, true)
     server.bindAddr(Port(5001), "0.0.0.0")
@@ -89,14 +84,4 @@ proc serve*() {.async.} =
 
     while true:
         let client = await server.accept()
-        try:
-            # handshake to client
-            ctx.wrapConnectedSocket(client, handshakeAsServer)
-            if not client.isSsl:
-                client.close()
-        except SslError:
-            echo "SSL Handshake failed"
-            client.close()
-
-        if not client.isClosed:
-            asyncCheck processClient(client)
+        asyncCheck processClient(client)
