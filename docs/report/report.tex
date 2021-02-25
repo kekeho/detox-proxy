@@ -1,0 +1,105 @@
+\documentclass[10pt,a4paper\arg,uplatex,a4j,dvipdfmx]{jsarticle}
+\usepackage[top=25truemm,bottom=25truemm,left=25truemm,right=25truemm]{geometry}
+\usepackage[jis2004]{otf}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[dvipdfmx]{color}
+\usepackage{longtable}
+\usepackage{xcolor}
+
+\usepackage{url}
+\usepackage{makeidx}
+\usepackage{pifont}
+\usepackage{here}
+\usepackage{multirow}
+\usepackage{xparse}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{plext}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{multicol}
+
+
+\usepackage[backend=biber,style=ieee]{biblatex}
+\bibliography{report.bib}
+
+% ソースコード
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+
+\usepackage{url}
+
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\ctext}[1]{\hbox{\textcircled{\scriptsize{#1}}}}
+
+\NewDocumentCommand{\codeword}{v}{%
+    \texttt{\textcolor{black}{#1}}%
+}
+
+\renewcommand{\lstlistingname}{ソースコード}
+
+
+\begin{document}
+
+    \section*{概要}
+
+
+    \newpage
+
+    \begin{multicols}{2}
+
+    \section{目的}
+    私は、SNS中毒者である\footnote{河井ら \cite{kawai2011sns} のSNS依存尺度に基づく.}.
+    その症状として, Twitter\footnote{米Twitter社が運営する, 短文を中心としたSNSサービス. \url{https://twitter.com}}を常に見ていないと落ち着かない\footnote{離脱症状\cite{griffiths2005}}・Twitterを開き, 閉じようと思って閉じても気づくとTwitterを開き直している・Twitterのクライアントアプリを端末から削除しても, ブラウザからアクセスしてしまう\footnote{再燃現象\cite{griffiths2005}}・常にTweetDeckが画面に表示されており, 作業に集中できない・Twitterをなかなか辞められないことに対する罪悪感を感じているも, 結局やめることができない\footnote{葛藤(Intrapersonal conflict)\cite{griffiths2005}}といったものがある.
+    
+    また, 世の中にはネット中毒\footnote{定義は確立していないようである}と思われる人が多数存在し、(症例を調査する)に悩まされている。
+    調査では、
+    
+    一般人口を代表する参加者:
+      ノルウェー: 1.0\%
+      米国: 0.7\%
+    ヨーロッパ11カ国の学校: 4.4\%
+    台湾: ネット中毒の有病率が10.6\%に達したとする調査結果もある\cite{wu2015risk}.
+    日本の中高生: 男性6.2\%, 女性9.8\%
+   
+    \section{概要}
+    
+    特に携帯電話からのアクセスの場合、依存者ほど利用頻度が高いとする調査結果に注目
+    
+   ギャンブルと同じような感じで、ドーパミンが… → 断ち切ればいい
+   
+   流動現象を防ぐために, モニタリングが効果的\cite{internetaddiction}
+   モニタリング後の外的ストップテクニックとして使える\cite{internetaddiction}
+
+    \section{動作原理}
+
+    \section{仕様}
+
+    \section{結果}
+
+    \section{考察}
+
+    \end{multicols}
+
+
+  \printbibliography[title=参考文献]
+\end{document}
