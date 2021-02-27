@@ -13,7 +13,6 @@ import Browser.Navigation as Nav
 
 type InputEvent
     = UserName String
-    | Email String
     | Password String
     | TeamOfService Bool
     | SubmitForm
@@ -31,11 +30,6 @@ update msg model =
             case event of
                 UserName username ->
                     ( { model | username = username }
-                    , Cmd.none
-                    )
-                
-                Email email ->
-                    ( { model | email = email }
                     , Cmd.none
                     )
                 

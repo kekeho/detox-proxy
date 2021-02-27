@@ -18,7 +18,6 @@ type alias UserPageModel =
 
 type alias User =
     { id: Int
-    , username: String
     , email: String
     , block: List BlockAddress
     }
@@ -185,10 +184,9 @@ delBlockFilter blockList =
 
 userDecoder : D.Decoder User
 userDecoder =
-    D.map4 User
+    D.map3 User
         (D.field "id" D.int)
         (D.field "username" D.string)
-        (D.field "email" D.string)
         (D.field "blocklist" (D.list blockAddressDecoder))
 
 

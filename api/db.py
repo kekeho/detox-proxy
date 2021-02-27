@@ -54,21 +54,19 @@ Base: DeclarativeMeta = declarative_base()
 class User(Base):
     __tablename__ = 'user'
     id = Column('id', Integer, primary_key=True)
-    username = Column('username', String, nullable=False)
-    email = Column('email', String, nullable=False, unique=True)
+    username = Column('username', String, nullable=False, unique=True)
 
     hashed_password = Column('hashed_pass', String, nullable=False)
 
     blocklist = relationship('Block')
 
     @classmethod
-    def create(cls, username: str, email: str, raw_password: str):
+    def create(cls, username: str, raw_password: str):
         salt = bcrypt.gensalt(rounds=12, prefix=b'2b')
         hashed_password = bcrypt.hashpw(raw_password.encode('utf-8'), salt)
 
         return cls(
             username=username,
-            email=email,
             hashed_password=hashed_password.decode(),
         )
 
@@ -94,7 +92,7 @@ class User(Base):
         return u
 
     @classmethod
-    def get_with_email(cls, s: scoped_session, email: str):
+    def get_with_username(cls, s: scoped_session, username: str):
         """Get User
 
         return:
@@ -102,7 +100,7 @@ class User(Base):
                 success -> User
                 not found -> None
         """
-        q = s.query(cls).filter(cls.email == email).all()
+        q = s.query(cls).filter(cls.username == username).all()
         if len(q) == 0:
             return None
 

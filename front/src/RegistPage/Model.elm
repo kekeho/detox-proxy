@@ -12,7 +12,6 @@ import Http
 
 type alias RegistPageModel =
     { username: String
-    , email: String
     , password: String
     , teamOfServiceAccept: Bool
     , result: Maybe (Result Http.Error User)
@@ -27,7 +26,6 @@ initModel =
     RegistPageModel
         ""
         ""
-        ""
         False
         Nothing
 
@@ -39,6 +37,5 @@ registModelEncoder : RegistPageModel -> E.Value
 registModelEncoder model =
     E.object
         [ ("username", E.string model.username)
-        , ("email", E.string model.email )
         , ("raw_password", E.string model.password)
         ]

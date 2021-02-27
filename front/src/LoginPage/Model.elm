@@ -9,7 +9,7 @@ import Http
 import Json.Encode as E
 
 type alias LoginPageModel =
-    { email: String
+    { username: String
     , password: String
     , remember: Bool
     , result: Maybe (Result Http.Error ())
@@ -28,7 +28,7 @@ initLoginPageModel =
 loginModelEncoder : LoginPageModel -> E.Value
 loginModelEncoder model =
     E.object
-        [ ("email", E.string model.email)
+        [ ("username", E.string model.username)
         , ("raw_password", E.string model.password)
         , ("remember", E.bool model.remember)
         ]

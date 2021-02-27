@@ -44,9 +44,6 @@ registFormView model =
         [ registFieldView "username" "text" "ユーザー名" 
             True model.username
             (onInput <| (\s -> FormInput (UserName s)))
-        , registFieldView "email" "email" "メールアドレス"
-            True model.email
-            (onInput <| (\s -> FormInput (Email s)))
         , registFieldView "password" "password" "パスワード"
             True model.password
             (onInput <| (\s -> FormInput (Password s)))

@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel
 from fastapi import HTTPException, status
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from sqlalchemy.orm.scoping import scoped_session
 import db
@@ -66,7 +66,6 @@ class BlockCreate(BaseModel):
 class User(BaseModel):
     id: int
     username: str
-    email: str
     blocklist: List[Block]
 
     @classmethod
@@ -74,42 +73,36 @@ class User(BaseModel):
         return cls(
             id=db_user.id,
             username=db_user.username,
-            email=db_user.email,
             blocklist=[Block.from_db(b) for b in db_user.blocklist]
         )
 
 
 class CreateUser(BaseModel):
     username: str
-    email: str
     raw_password: str
 
-    async def create(self, send_mail: bool = True) -> User:
+    async def create(self, send_mail: bool = True) -> Tuple[User, str]:
         """Create User
         WARNING: THIS METHOD DOES NOT COMMIT
-        params
-        ------
-            send_mail:
-                if send verify email, muse be True
-                (default: True)
         """
         with db.session_scope() as s:
-            exists = db.User.get_with_email(s, self.email)
+            exists = db.User.get_with_username(s, self.username)
             if exists is not None:
                 raise HTTPException(status.HTTP_409_CONFLICT,
-                                    'Email already registered')
+                                    'Username already registered')
 
-            db_u = db.User.create(self.username, self.email,
-                                  self.raw_password)
+            db_u = db.User.create(self.username, self.raw_password)
             s.add(db_u)
             s.commit()
 
             u = User.from_db(db_u)
-            return User.from_db(u)
+
+            token = db.Token.issue_token(db_u)
+            return u, token
 
 
 class LoginUser(BaseModel):
-    email: str
+    username: str
     raw_password: str
     remember: bool
 
@@ -122,7 +115,7 @@ class LoginUser(BaseModel):
                 fail -> None
         """
         with db.session_scope() as s:
-            u: Optional[db.User] = db.User.get_with_email(s, self.email)
+            u: Optional[db.User] = db.User.get_with_username(s, self.username)
             if u is None:
                 return None
 

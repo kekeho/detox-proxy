@@ -20,9 +20,9 @@ view model =
     , [ div [ class "login panel" ]
         [ h1 [] [ text "ログイン" ]
         , Html.form [ onSubmit <| FormInput (SubmitForm)]
-            [ loginFieldView "email" "email" "メールアドレス" True
-                model.email
-                (onInput <| (\s -> FormInput (Email s)))
+            [ loginFieldView "username" "text" "ユーザー名" True
+                model.username
+                (onInput <| (\s -> FormInput (Username s)))
             , loginFieldView "password" "password" "パスワード" True
                 model.password
                 (onInput <| (\s -> FormInput (Password s)))

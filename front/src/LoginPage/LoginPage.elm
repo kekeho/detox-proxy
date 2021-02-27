@@ -12,7 +12,7 @@ import LoginPage.Model exposing (..)
 
 
 type InputEvent
-    = Email String
+    = Username String
     | Password String
     | Remember Bool
     | SubmitForm
@@ -29,8 +29,8 @@ update key msg model =
     case msg of
         FormInput event ->
             case event of
-                Email e ->
-                    ( { model | email = e }
+                Username u ->
+                    ( { model | username = u }
                     , Cmd.none 
                     )
                 
