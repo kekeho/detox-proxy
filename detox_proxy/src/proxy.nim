@@ -13,6 +13,8 @@ proc processClient(client: AsyncSocket) {.async.} =
     var data: string
     data = await client.recv(1024)
 
+    echo data
+
     if data.len == 0:
         echo "LEN"
         return
@@ -24,7 +26,28 @@ proc processClient(client: AsyncSocket) {.async.} =
             client.close()
         return
     
-    let req = maybeReq.get()
+    var req = maybeReq.get()
+
+    # auth
+    if req.basic.isNone:
+        await client.send("HTTP/1.1 407 Proxy Authentication Required\c\nProxy-Authenticate: Basic realm=\"detox-proxy\"\c\n\c\n")
+        data = await client.recv(1024)
+        if data.len == 0:
+            echo "LEN_AUTH"
+            return
+        
+        let maybeReq = httpRequestParser(data)
+        if maybeReq.isNone():
+            echo "failed to parse"
+            if not client.isClosed:
+                client.close()
+            return
+
+        req = maybeReq.get()
+        if req.basic.isNone:
+            echo "proxy-authenticationに対応してない"
+            client.close()
+            return
 
     # connect to remote
     let maybeHost = req.headers.getHeader("host")
