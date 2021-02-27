@@ -34,11 +34,7 @@ registPanelView : RegistPageModel -> Html RegistPageMsg
 registPanelView model =
     div [ class "regist-panel" ]
         [ h1 [] [ text "ユーザー登録" ]
-        , case model.result of
-            Just (Ok _) ->
-                registeredView model
-            _ ->
-                registFormView model
+        , registFormView model
         ]
 
 
@@ -106,19 +102,6 @@ confirmTeamOfServiceView nowValue =
             [ a [ href "/docs/teamofservice", target "_blank" ]  [ text "利用規約" ]
             , text "に同意"
             ]
-        ]
-
-
-registeredView : RegistPageModel -> Html RegistPageMsg
-registeredView model =
-    div [ class "registered" ]
-        [ h2 [ ]
-            [ text "仮登録が完了しました👍" ]
-        , p [] [ text "最後のステップです!" ]
-        , p []
-            [ text "メールアドレスに、認証用のリンクを送信しました。リンクをクリックして、アカウントを有効化してください。" ]
-        , p []
-            [ text "メールが届いていない場合は、迷惑フォルダを確認してみてください。" ]
         ]
 
 

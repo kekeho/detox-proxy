@@ -8,7 +8,7 @@ module RegistPage.RegistPage exposing (..)
 import Http
 import RegistPage.Model exposing (..)
 import UserPage.Model exposing (..)
-
+import Browser.Navigation as Nav
 
 
 type InputEvent
@@ -58,7 +58,7 @@ update msg model =
             case result of
                 Ok _ ->
                     ( { initModel | result = Just result }
-                    , Cmd.none
+                    , Nav.load "/"
                     )
                 Err _ ->
                     ( { model | result = Just result }

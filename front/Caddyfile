@@ -2,11 +2,6 @@
 
 {$HOSTNAME} {
     tls /cert/cert.crt /cert/cert.key
-    redir https://www.{$HOSTNAME}{uri}
-}
-
-www.{$HOSTNAME} {
-    tls /cert/cert.crt /cert/cert.key
     encode zstd gzip
     route /api/* {
         reverse_proxy api:8000

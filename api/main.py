@@ -45,48 +45,6 @@ async def create_user(u: schema.CreateUser):
     return new_user
 
 
-@app.get(
-    '/api/user/activate/{token:str}',
-    description='Activate user',
-    status_code=status.HTTP_200_OK,
-    responses={
-        status.HTTP_307_TEMPORARY_REDIRECT: {
-            'description': 'Successful Response (user account activated)',
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            'description': 'Verify token is missing'
-        },
-        status.HTTP_403_FORBIDDEN: {
-            'description': 'Invalid token'
-        },
-    },
-)
-async def activate_user(token: str):
-    with db.session_scope() as s:
-        v: Optional[db.CreateUserVerify] = db.CreateUserVerify.get(s, token)
-        if v is None:
-            raise HTTPException(status.HTTP_403_FORBIDDEN,
-                                "Invalid token")
-
-        # don't care is_active
-        u: Optional[db.User] = s.query(db.User).get(v.user)
-        if u is None:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
-        u.is_active = True
-        s.delete(v)
-
-        token = db.Token.issue_token(u)
-        maxage = 'Max-Age=7776000;'
-        cookie = f'token={token}; HttpOnly; '
-        cookie += f'SameSite=Strict; Secure; {maxage} path=/;'
-        header = {
-            'Set-Cookie': cookie,
-            'Location': '/'
-        }
-
-    return Response(None, status.HTTP_307_TEMPORARY_REDIRECT, headers=header)
-
-
 @app.post(
     '/api/user/login',
     description='login',

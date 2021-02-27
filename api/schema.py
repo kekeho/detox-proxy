@@ -8,10 +8,6 @@ from fastapi import HTTPException, status
 from typing import List, Optional
 
 from sqlalchemy.orm.scoping import scoped_session
-
-import email_util
-from fastapi_mail import MessageSchema
-
 import db
 
 
@@ -52,7 +48,7 @@ class BlockCreate(BaseModel):
     end: int
     active: bool
 
-    def create(self, s: scoped_session, 
+    def create(self, s: scoped_session,
                db_user: db.User) -> Block:
         b = db.Block()
         b.user = db_user.id
@@ -82,15 +78,6 @@ class User(BaseModel):
             blocklist=[Block.from_db(b) for b in db_user.blocklist]
         )
 
-    async def send_mail(self, subj: str, message: str):
-        msg = MessageSchema(
-            subject=subj,
-            recipients=[self.email],
-            body=message,
-        )
-
-        await email_util.fm.send_message(msg)
-
 
 class CreateUser(BaseModel):
     username: str
@@ -116,9 +103,6 @@ class CreateUser(BaseModel):
                                   self.raw_password)
             s.add(db_u)
             s.commit()
-
-            raw_verify_token = db.CreateUserVerify.issue(s, db_u)
-            await db.CreateUserVerify.send_email(s, raw_verify_token)
 
             u = User.from_db(db_u)
             return User.from_db(u)

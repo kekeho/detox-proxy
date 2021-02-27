@@ -11,8 +11,8 @@ services:
     volumes:
       - ./front/Caddyfile:/code/Caddyfile
       - ./front/public:/public
-      - ./detox_proxy/cert.crt:/cert/cert.crt
-      - ./detox_proxy/cert.key:/cert/cert.key
+      - ./front/cert.crt:/cert/cert.crt
+      - ./front/cert.key:/cert/cert.key
 
   proxy:
     build: detox_proxy

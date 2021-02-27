@@ -9,14 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.sql.sqltypes import DateTime
-from fastapi import HTTPException, status
-
-import email_util
-from fastapi_mail import MessageSchema
 
 import bcrypt
-import datetime
 import os
 import uuid
 from typing import Any
@@ -66,7 +60,6 @@ class User(Base):
     hashed_password = Column('hashed_pass', String, nullable=False)
 
     blocklist = relationship('Block')
-    is_active = Column('is_active', Boolean, nullable=False, default=False)
 
     @classmethod
     def create(cls, username: str, email: str, raw_password: str):
@@ -77,7 +70,6 @@ class User(Base):
             username=username,
             email=email,
             hashed_password=hashed_password.decode(),
-            is_active=False,
         )
 
     @classmethod
@@ -97,9 +89,6 @@ class User(Base):
         """
         u = s.query(cls).get(id)
         if u is None:
-            return None
-
-        if u.is_active is False:
             return None
 
         return u
@@ -129,9 +118,6 @@ class User(Base):
         ------
         success: bool
         """
-        if self.is_active is False:
-            return False
-
         hashed_password = str(self.hashed_password)
         print(hashed_password)
         print(raw_password)
@@ -231,106 +217,3 @@ class Block(Base):
     start = Column('start', Integer, nullable=False)  # sec
     end = Column('end', Integer, nullable=False)  # sec
     active = Column('active', Boolean, nullable=False, default=True)
-
-
-class CreateUserVerify(Base):
-    __tablename__ = 'create_user_veryfi'
-    token = Column('token', String, primary_key=True)  # uuid
-    user = Column('user_id', ForeignKey('user.id'), nullable=False)
-    created_at = Column('created_at', DateTime, nullable=False,
-                        default=datetime.datetime.now)
-
-    limit = datetime.timedelta(hours=1)
-
-    @classmethod
-    def issue(cls, s: scoped_session, user: User) -> str:
-        """Issue verify token
-
-        params
-        ------
-            s: scoped_session
-            user: User instance
-
-        returns
-        -------
-            verify token: raw token
-        """
-        token_salt = bcrypt.gensalt(rounds=4, prefix=b'2b')
-        raw_token = str(uuid.uuid4()) + f'@{user.id}'
-        hashed_token = bcrypt.hashpw(raw_token.encode('utf-8'), token_salt)
-
-        v = cls(token=hashed_token.decode(), user=user.id,
-                created_at=datetime.datetime.now())
-        s.add(v)
-        s.commit()
-
-        return raw_token
-
-    @classmethod
-    def get(cls, s: scoped_session, raw_token: str) -> Optional[Any]:
-        """Get CreateUserVerify instance with token
-
-        params
-        ------
-            s: scoped_session
-            token: str
-
-        returns
-        -------
-            v: Optional[CreateUserVerify]
-        """
-        try:
-            raw_token, userid = raw_token.split('@')
-        except ValueError:
-            return None
-
-        v = s.query(cls).filter(
-            cls.user == userid
-        ).all()
-        if len(v) != 1:
-            return None
-        v = v[0]
-        if v is None:
-            return None
-
-        if v.is_active is False:
-            return None
-
-        return v
-
-    @staticmethod
-    async def send_email(s: scoped_session, raw_token):
-        hostname = os.environ['DETOX_PROXY_HOST']
-        https_port = os.environ['DETOX_PROXY_PORT']
-
-        v = CreateUserVerify.get(s, raw_token)
-        if v is None:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        user = s.query(User).get(v.user)  # don't care is_active
-        if user is None:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        msg = MessageSchema(
-            subject="detox-proxy アカウント登録の手続き",
-            recipients=[user.email],
-            body=f"""detox-proxyへようこそ! <br/>
-アカウント登録のお手続きをいただき、誠にありがとうございます。<br/>
-<br/>
-手続きを完了させるために、以下のリンクを1時間以内にクリックしてください。<br/>
-<br/>
-<a href="https://{hostname}:{https_port}/api/user/activate/{raw_token}">
-    アカウントの有効化
-</a>
-""",
-            subtype='html'
-        )
-
-        await email_util.fm.send_message(msg)
-
-    def is_active(self) -> bool:
-        now = datetime.datetime.now()
-        if now - self.created_at < self.limit:
-            return True
-
-        return False
