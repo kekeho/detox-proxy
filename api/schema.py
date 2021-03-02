@@ -140,7 +140,8 @@ class CreateUser(BaseModel):
             db_u = db.User.create(self.username, self.raw_password)
             s.add(db_u)
 
-            send_user({'username': db_u.username, 'hashed_password': db_u.hashed_password})
+            send_user({'username': db_u.username,
+                       'hashed_password': db_u.hashed_password})
 
             s.commit()
 

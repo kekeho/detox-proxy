@@ -6,11 +6,8 @@
 from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Response
 from fastapi import status
-import fastapi
 from fastapi.params import Cookie
 import os
-
-from starlette.responses import JSONResponse
 
 import schema
 import db
@@ -57,7 +54,8 @@ async def create_user(u: schema.CreateUser):
     cookie = f'token={token}; HttpOnly; '
     cookie += f'SameSite=Strict; Secure; {maxage} path=/;'
     headers = {'Set-Cookie': cookie}
-    return Response(new_user.json(), status.HTTP_202_ACCEPTED, headers=headers, media_type='text/json')
+    return Response(new_user.json(), status.HTTP_202_ACCEPTED,
+                    headers=headers, media_type='text/json')
 
 
 @app.post(
