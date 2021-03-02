@@ -9,6 +9,7 @@ uvicorn = "*"
 sqlalchemy = "*"
 bcrypt = "*"
 psycopg2-binary = "*"
+requests = "*"
 
 [dev-packages]
 autopep8 = "*"

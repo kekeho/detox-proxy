@@ -6,9 +6,17 @@
 from pydantic import BaseModel
 from fastapi import HTTPException, status
 from typing import List, Optional, Tuple
+import os
 
 from sqlalchemy.orm.scoping import scoped_session
 import db
+
+import requests
+
+
+
+HOST = os.environ['DETOX_PROXY_PROXY_HOST']
+PROXY_API_PORT = os.environ['DETOX_PROXY_PROXY_API_PORT']
 
 
 class Block(BaseModel):
@@ -81,7 +89,7 @@ class CreateUser(BaseModel):
     username: str
     raw_password: str
 
-    async def create(self, send_mail: bool = True) -> Tuple[User, str]:
+    async def create(self) -> Tuple[User, str]:
         """Create User
         WARNING: THIS METHOD DOES NOT COMMIT
         """
@@ -93,11 +101,18 @@ class CreateUser(BaseModel):
 
             db_u = db.User.create(self.username, self.raw_password)
             s.add(db_u)
+
+            r = requests.post(f'http://proxy:{PROXY_API_PORT}/user/regist',
+                              json={'username': db_u.username,
+                                    'hashed_password': db_u.hashed_password})
+            if r.status_code != 201:
+                raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             s.commit()
 
             u = User.from_db(db_u)
-
             token = db.Token.issue_token(db_u)
+
             return u, token
 
 

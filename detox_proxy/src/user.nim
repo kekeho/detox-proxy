@@ -29,13 +29,15 @@ proc registUser(req: Request) {.async.} =
     
     except KeyError:
         await req.respond(Http422, "Validation Error")
+    
+    echo userlist  # TODO: DEBUG
     await req.respond(Http201, "Registered")
 
 
 
 proc userCb(req: Request) {.async.} =
     try:
-        if req.reqMethod == HttpPost and req.url.path == "/regist":
+        if req.reqMethod == HttpPost and req.url.path == "/user/regist":
             await registUser(req)
         else:
             await req.respond(Http404, "404 Not Found")
