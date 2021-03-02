@@ -14,7 +14,6 @@ import db
 import requests
 
 
-
 HOST = os.environ['DETOX_PROXY_PROXY_HOST']
 PROXY_API_PORT = os.environ['DETOX_PROXY_PROXY_API_PORT']
 

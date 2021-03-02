@@ -19,8 +19,6 @@ services:
     ports:
       - 5001:5001
       - 5002:5002
-    depends_on:
-      - api
 
   api:
     build: 
@@ -41,6 +39,7 @@ services:
       DETOX_PROXY_PROXY_HTTP_PORT: "5001"
       DETOX_PROXY_PROXY_API_PORT: "5002"
     depends_on:
+      - proxy
       - apidb
 
   apidb:

@@ -3,6 +3,7 @@ import asyncdispatch
 import net
 import nativesockets
 import options
+import user
 
 import common
 
@@ -48,6 +49,13 @@ proc processClient(client: AsyncSocket) {.async.} =
             echo "proxy-authenticationに対応してない"
             client.close()
             return
+    
+    echo "AUTH"
+    let authResult =  auth(req.basic.get())
+    if authResult == false:
+        await client.send("HTTP/1.1 401 Unauthorized\c\n\c\nwrong username or password\c\n")
+        client.close()
+        return
 
     # connect to remote
     let maybeHost = req.headers.getHeader("host")

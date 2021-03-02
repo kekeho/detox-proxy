@@ -14,6 +14,7 @@ from starlette.responses import JSONResponse
 
 import schema
 import db
+import sync
 
 # Init db
 db.Base.metadata.create_all(bind=db.engine)
@@ -22,6 +23,10 @@ app = FastAPI(
     docs_url='/api/docs',
     openapi_url='/api/openapi.json',
 )
+
+
+# sync to proxy
+sync.sync()
 
 
 @app.get('/api')

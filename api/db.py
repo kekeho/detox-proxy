@@ -62,7 +62,7 @@ class User(Base):
 
     @classmethod
     def create(cls, username: str, raw_password: str):
-        salt = bcrypt.gensalt(rounds=12, prefix=b'2b')
+        salt = bcrypt.gensalt(rounds=12, prefix=b'2a')
         hashed_password = bcrypt.hashpw(raw_password.encode('utf-8'), salt)
 
         return cls(

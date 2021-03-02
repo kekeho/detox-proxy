@@ -2,9 +2,11 @@ import asynchttpserver
 import httpclient
 import asyncdispatch
 import common
-import options
 import json
 import strutils
+import sequtils
+import easy_bcrypt
+import sugar
 
 
 type
@@ -13,7 +15,7 @@ type
         hashedPassword: string
 
 
-var userlist {.threadvar.}: seq[User]
+var userlist {.threadvar.}: seq[User]  # TODO: Tableのほうがはやそう. ユニークだし.
 
 
 
@@ -48,3 +50,15 @@ proc userCb(req: Request) {.async.} =
 proc serveUserServer*() {.async.} =
     let userServer = newAsyncHttpServer()
     asyncCheck userServer.serve(Port(5002), userCb, "0.0.0.0")
+
+
+proc auth*(basic: Basic): bool =
+    let r = userlist.filter(
+        u => 
+            ( u.username == basic.username ) and 
+            ( loadPasswordSalt(u.hashedPassword) == hashPw( basic.password, loadPasswordSalt(u.hashedPassword) ) )
+    )
+    if r.len > 0:
+        return true
+    else:
+        return false

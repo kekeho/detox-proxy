@@ -27,9 +27,9 @@ type
 
 
 type
-    Basic = object
-        username: string
-        password: string
+    Basic* = object
+        username*: string
+        password*: string
 
 
 type
