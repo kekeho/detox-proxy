@@ -1,7 +1,9 @@
 import asynchttpserver
+import uri
 import httpclient
 import asyncdispatch
 import common
+import tables
 import json
 import strutils
 import sequtils
@@ -9,14 +11,24 @@ import easy_bcrypt
 import sugar
 
 
+
+type
+    Block = object
+        user: string
+        url: Uri
+        startTime: int
+        endTime: int
+        active: bool
+
+
 type
     User = object
         username: string
         hashedPassword: string
+        blockList: seq[Block]
 
 
-var userlist {.threadvar.}: seq[User]  # TODO: Tableのほうがはやそう. ユニークだし.
-
+var userlist {.threadvar.}: Table[string, User]  # username: User
 
 
 proc registUser(req: Request) {.async.} =
@@ -27,12 +39,10 @@ proc registUser(req: Request) {.async.} =
         let username: string = jsonNode["username"].getStr()
         let hashedPasswd: string = jsonNode["hashed_password"].getStr()
         let user = User(username: username, hashedPassword: hashedPasswd)
-        userlist.add(user)
-    
+        userlist[username] = user
     except KeyError:
         await req.respond(Http422, "Validation Error")
-    
-    echo userlist  # TODO: DEBUG
+
     await req.respond(Http201, "Registered")
 
 
@@ -53,12 +63,17 @@ proc serveUserServer*() {.async.} =
 
 
 proc auth*(basic: Basic): bool =
-    let r = userlist.filter(
-        u => 
-            ( u.username == basic.username ) and 
-            ( loadPasswordSalt(u.hashedPassword) == hashPw( basic.password, loadPasswordSalt(u.hashedPassword) ) )
-    )
-    if r.len > 0:
+    echo userlist
+    var u: User
+    try:
+        u = userlist[basic.username]    
+    except KeyError:
+        return false
+
+    let hashedPw = loadPasswordSalt(u.hashedPassword)
+    let inputHashedPw = hashPw( basic.password, loadPasswordSalt(u.hashedPassword) )
+
+    if (u.username == basic.username) and ( hashedPw == inputHashedPw ):
         return true
     else:
         return false
