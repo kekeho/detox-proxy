@@ -127,7 +127,27 @@ proc auth*(basic: Basic): bool =
 proc isAccessable*(username: string, address: Uri): bool =
     let u: User = userlist[username]
     for b in u.blockList:
+        if b.active == false:
+            return true
+
         if b.url == address:
-            return false  # TODO: 時間で遮断に直す
-    
+            var maybeLog: Option[DateTime]
+            try:
+                maybeLog = accessLog[b]
+            except KeyError:
+                accessLog[b] = some(now())
+                return true
+
+            if maybeLog.isNone:
+                accessLog[b] = some(now())
+                return true
+
+            let log = maybeLog.get()
+            if now() - log > initDuration(minutes=b.startTime):
+                if now() - log > initDuration(minutes=b.startTime + b.endTime):
+                    accessLog[b] = none(DateTime)
+                    return true
+                else:
+                    return false
+
     return true
