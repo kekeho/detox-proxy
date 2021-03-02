@@ -215,8 +215,8 @@ proc relay*(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
         try:
             let data = await conn.a.recv(1024)
             if data.len == 0:
-                safeClose(conn)
-                return
+                continue
+
             await conn.b.send(data)
             conn.last_timestamp = now().toTime.toUnix
         except OSError, ValueError:
