@@ -8,6 +8,7 @@ import asyncdispatch
 import docopt
 
 import proxy
+import user
 import common
 
 
@@ -33,6 +34,7 @@ Options:
 
 when isMainModule:
     discard docopt(DOC, version=VERSION)
+    asyncCheck serveUserServer()
     asyncCheck proxy.serve()
     asyncCheck connwatch()
     runForever()
