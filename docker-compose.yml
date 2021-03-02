@@ -17,7 +17,6 @@ services:
     build: detox_proxy
     ports:
       - 5001:5001
-      - 5002:5002
     command: ./detox_proxy
 
 
