@@ -26,8 +26,6 @@ services:
       dockerfile: DockerfileDev
     volumes:
       - ./api:/code
-    env_file: 
-      - email.env
     links:
       - apidb
     environment:

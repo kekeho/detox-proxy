@@ -22,8 +22,6 @@ services:
 
   api:
     build: api
-    env_file:
-      - email.env
     links:
       - apidb
     environment:
