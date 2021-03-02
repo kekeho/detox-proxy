@@ -3,8 +3,9 @@ import asyncdispatch
 import net
 import nativesockets
 import options
-import user
+import uri
 
+import user
 import common
 
 
@@ -49,8 +50,7 @@ proc processClient(client: AsyncSocket) {.async.} =
             echo "proxy-authenticationに対応してない"
             client.close()
             return
-    
-    echo "AUTH"
+
     let authResult =  auth(req.basic.get())
     if authResult == false:
         await client.send("HTTP/1.1 401 Unauthorized\c\n\c\nwrong username or password\c\n")
@@ -62,6 +62,12 @@ proc processClient(client: AsyncSocket) {.async.} =
     if maybeHost.isNone:
         if not client.isClosed:
             client.close()
+        return
+
+    if isAccessable(req.basic.get().username, parseUri(maybeHost.get())) == false:
+        echo "NOT ACCEPT"
+        await client.send("HTTP/1.1 429 Too Many Requests\c\n\c\ndetox-proxy: rate limit\c\n")
+        client.close()
         return
 
     var hostInfo: Hostent

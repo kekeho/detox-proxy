@@ -6,11 +6,11 @@ import common
 import tables
 import json
 import strutils
-import sequtils
 import easy_bcrypt
 import sets
-import sugar
 import hashes
+import times
+import options
 
 
 
@@ -34,6 +34,7 @@ proc hash(b: Block): Hash =
 
 
 var userlist {.threadvar.}: Table[string, User]  # username: User
+var accessLog {.threadvar.}: Table[Block, Option[DateTime]]  # block: first access
 
 
 proc registUser(req: Request) {.async.} =
@@ -68,10 +69,10 @@ proc registBlock(req: Request) {.async.} =
     try:
         for b in blockNode.getElems():
             let blockObj = Block(
-                    url: parseUri(b["url"].getStr),
-                    startTime: b["start"].getInt,
-                    endTime: b["end"].getInt,
-                    active: b["active"].getBool,
+                url: parseUri(b["url"].getStr),
+                startTime: b["start"].getInt,
+                endTime: b["end"].getInt,
+                active: b["active"].getBool,
             )
             blockList = blockList + toHashSet([blockObj,])
     except KeyError:
@@ -121,3 +122,12 @@ proc auth*(basic: Basic): bool =
         return true
     else:
         return false
+
+
+proc isAccessable*(username: string, address: Uri): bool =
+    let u: User = userlist[username]
+    for b in u.blockList:
+        if b.url == address:
+            return false  # TODO: 時間で遮断に直す
+    
+    return true
