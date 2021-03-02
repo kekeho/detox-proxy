@@ -141,6 +141,7 @@ async def set_block_address(block_create_list: List[schema.BlockCreate],
 
         results = [b.create(s, u) for b in block_create_list]
         s.commit()
+        schema.sync_block()
 
     return results
 
@@ -170,7 +171,9 @@ async def update_block_address(update_list: List[schema.Block],
         if u is None:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
-    return [x.update() for x in update_list]
+    result = [x.update() for x in update_list]
+    schema.sync_block()
+    return result
 
 
 @app.delete(
@@ -206,6 +209,7 @@ async def delete_block_address(delete_list: List[int],
                 raise HTTPException(status.HTTP_404_NOT_FOUND)
             s.delete(d)
         s.commit()
+        schema.sync_block()
 
     return ""
 
