@@ -36,7 +36,7 @@ async def index():
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
-            'model': schema.Block,
+            'model': List[schema.Block],
             'description': 'Successful response',
         },
         status.HTTP_401_UNAUTHORIZED: {
