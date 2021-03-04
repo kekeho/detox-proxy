@@ -12,4 +12,3 @@ bin           = @["detox_proxy"]
 
 requires "nim >= 1.4.2"
 requires "docopt >= 0.6.8"
-requires "easy_bcrypt >= 2.0.3"

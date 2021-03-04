@@ -17,17 +17,6 @@ headerView =
                         []
                     ]
             ]
-        
-        , div [ class "nav" ]
-            [ a [ href "/regist" ]
-                [ div [ class "regist" ]
-                    [ text "登録" ]
-                ]
-            , a [ href "/login" ]
-                [ div [ class "login" ]
-                    [ text "ログイン" ]
-                ]
-            ]
         ]
 
 

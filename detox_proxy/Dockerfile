@@ -7,9 +7,6 @@ COPY ./nim.cfg /code
 
 WORKDIR /code
 RUN nimble install -d -y
-# fix bcrypt
-RUN cat /root/.nimble/pkgs/easy_bcrypt-2.0.3/easy_bcrypt.nim | sed "s/.. <BCRYPT_HASHSIZE/.. (BCRYPT_HASHSIZE - 1)/" > /root/.nimble/pkgs/easy_bcrypt-2.0.3/easy_bcrypt.nim
-
 
 COPY ./ /code
 RUN nimble build -y

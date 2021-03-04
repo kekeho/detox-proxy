@@ -5,7 +5,7 @@ import nativesockets
 import options
 import uri
 
-import user
+import blocks
 import common
 
 
@@ -28,18 +28,6 @@ proc processClient(client: AsyncSocket) {.async.} =
     
     var req = maybeReq.get()
 
-    # auth
-    if req.basic.isNone:
-        await client.send("HTTP/1.1 407 Proxy Authentication Required\c\nProxy-Authenticate: Basic realm=\"detox-proxy\"\c\n\c\n")
-        client.close()
-        return
-
-    let authResult =  auth(req.basic.get())
-    if authResult == false:
-        await client.send("HTTP/1.1 401 Unauthorized\c\n\c\nwrong username or password\c\n")
-        client.close()
-        return
-
     # connect to remote
     let maybeHost = req.headers.getHeader("host")
     if maybeHost.isNone:
@@ -47,7 +35,7 @@ proc processClient(client: AsyncSocket) {.async.} =
             client.close()
         return
 
-    if isAccessable(req.basic.get().username, parseUri(maybeHost.get())) == false:
+    if isAccessable(parseUri(maybeHost.get())) == false:
         echo "NOT ACCEPT"
         await client.send("HTTP/1.1 429 Too Many Requests\c\n\c\ndetox-proxy: rate limit\c\n")
         client.close()

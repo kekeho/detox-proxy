@@ -11,15 +11,8 @@ import Http
 
 
 type alias UserPageModel =
-    { user : Maybe (Result Http.Error User)
+    { blockList : Maybe (Result Http.Error (List BlockAddress))
     , blockPanel : List BlockAddress
-    }
-
-
-type alias User =
-    { id: Int
-    , email: String
-    , block: List BlockAddress
     }
 
 
@@ -182,14 +175,6 @@ delBlockFilter blockList =
 
 -- Decoder
 
-userDecoder : D.Decoder User
-userDecoder =
-    D.map3 User
-        (D.field "id" D.int)
-        (D.field "username" D.string)
-        (D.field "blocklist" (D.list blockAddressDecoder))
-
-
 blockAddressDecoder : D.Decoder BlockAddress
 blockAddressDecoder =
     D.map6 BlockAddress
@@ -199,6 +184,11 @@ blockAddressDecoder =
         (D.field "end" (D.map String.fromInt D.int))
         (D.field "active" D.bool)
         (D.succeed [])
+
+
+blockAddressListDecoder : D.Decoder (List BlockAddress)
+blockAddressListDecoder =
+    D.list blockAddressDecoder
 
 
 -- Encoder

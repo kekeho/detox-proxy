@@ -21,34 +21,17 @@ type BlockListInputType
 
 
 type UserPageMsg
-    = GetLoginUserInfo
-    | GotLoginUserInfo (Result Http.Error User)
-    | BlockListInput BlockId BlockListInputType
+    = BlockListInput BlockId BlockListInputType
     | NewBlockAddress
     | RegistAndUpdateBlocks
     | GotRegistNewBlockResult (Result Http.Error ())
     | GotDeleteBlockResult (Result Http.Error ())
+    | GotBlockAddressList (Result Http.Error (List BlockAddress))
 
 
 update : UserPageMsg -> UserPageModel -> (UserPageModel, Cmd UserPageMsg)
 update msg model =
     case msg of
-        GetLoginUserInfo ->
-            ( model, getLoginUserInfo )
-        
-        GotLoginUserInfo result ->
-            let
-                blockPanel = 
-                    case result of
-                        Ok u ->
-                            u.block
-                        Err _ ->
-                            []
-            in
-            ( { model | user = Just result, blockPanel = blockPanel }
-            , Cmd.none
-            )
-        
         BlockListInput blockId inputType ->
             case inputType of
                 Active bool ->
@@ -188,32 +171,42 @@ update msg model =
         GotRegistNewBlockResult result ->
             -- TODO: エラー処理
             ( model
-            , getLoginUserInfo  -- update
+            , getBlockAddressList  -- update
             )
 
 
         GotDeleteBlockResult result ->
             -- TODO: エラー処理
             ( model
-            , getLoginUserInfo  -- update
+            , getBlockAddressList  -- update
             )
-
+        
+        GotBlockAddressList result ->
+            case result of
+                Ok blockList ->
+                    ( { model | blockList = Just result, blockPanel = blockList }
+                    , Cmd.none
+                    )
+                Err _ ->
+                    ( { model | blockList = Just result, blockPanel = [] }
+                    , Cmd.none
+                    )
 
 
 -- CMD
 
-getLoginUserInfo : Cmd UserPageMsg
-getLoginUserInfo =
+getBlockAddressList : Cmd UserPageMsg
+getBlockAddressList =
     Http.get
-        { url = "/api/user"
-        , expect = Http.expectJson GotLoginUserInfo userDecoder
+        { url = "/api/blockaddress"
+        , expect = Http.expectJson GotBlockAddressList blockAddressListDecoder
         }
 
 
 registNewBlockAddress : List NormalizedBlockAddress -> Cmd UserPageMsg
 registNewBlockAddress blockList =
     Http.post
-        { url = "/api/user/blockaddress"
+        { url = "/api/blockaddress"
         , body = Http.jsonBody (E.list blockAddressEncoder blockList)
         , expect = Http.expectWhatever GotRegistNewBlockResult
         }
@@ -224,7 +217,7 @@ updateBlockAddress blockList =
     Http.request
         { method = "PUT"
         , headers = []
-        , url = "/api/user/blockaddress"
+        , url = "/api/blockaddress"
         , body = Http.jsonBody (E.list updateBlockAddressEncoder blockList)
         , expect = Http.expectWhatever GotRegistNewBlockResult
         , timeout = Nothing
@@ -237,7 +230,7 @@ deleteBlockAddress blockList =
     Http.request
         { method = "DELETE"
         , headers = []
-        , url = "/api/user/blockaddress"
+        , url = "/api/blockaddress"
         , body = Http.jsonBody (E.list E.int blockList)
         , expect = Http.expectWhatever GotDeleteBlockResult
         , timeout = Nothing

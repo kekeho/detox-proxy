@@ -14,12 +14,6 @@ import Url
 
 import View
 import Model exposing (..)
-import IndexPage.View
-import LoginPage.View
-import RegistPage.RegistPage
-import RegistPage.Model
-import RegistPage.View
-import LoginPage.LoginPage
 import UserPage.UserPage
 import UserPage.View
 import Url.Parser
@@ -40,15 +34,13 @@ main =
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
 init () url key =
     ( initModel url key
-    , Cmd.map UserPageMsg UserPage.UserPage.getLoginUserInfo
+    , Cmd.map UserPageMsg UserPage.UserPage.getBlockAddressList
     )
 
 
 type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
-    | RegistPageMsg RegistPage.RegistPage.RegistPageMsg
-    | LoginPageMsg LoginPage.LoginPage.LoginPageMsg
     | UserPageMsg UserPage.UserPage.UserPageMsg
 
 
@@ -67,25 +59,7 @@ update msg model =
             ( { model | url = url }
             , Cmd.none
             )
-        
-        RegistPageMsg subMsg ->
-            let
-                (registModel, subCmd) =
-                    RegistPage.RegistPage.update subMsg model.registPage
-            in
-            ( { model | registPage = registModel }
-            , Cmd.map RegistPageMsg subCmd
-            )
-        
-        LoginPageMsg subMsg ->
-            let
-                (loginModel, subCmd) =
-                    LoginPage.LoginPage.update model.key subMsg model.loginPage
-            in
-            ( { model | loginPage = loginModel }
-            , Cmd.map LoginPageMsg subCmd
-            )
-        
+
         UserPageMsg subMsg ->
             let
                 (userModel, subCmd) =
@@ -116,21 +90,8 @@ view model =
         (c, v) =
             case (Url.Parser.parse Model.routeParser model.url) of
                 Just IndexPage ->
-                    case model.userPage.user of
-                        Just (Ok _) ->
-                            UserPage.View.view model.userPage
-                                |> map UserPageMsg
-                        _ ->
-                            IndexPage.View.view
-                Just LoginPage ->
-                    LoginPage.View.view model.loginPage
-                        |> map LoginPageMsg
-                Just RegistPage ->
-                    RegistPage.View.view model.registPage
-                        |> \(c_, v_) ->
-                            ( c_
-                            , List.map (Html.map RegistPageMsg) v_
-                            )
+                    UserPage.View.view model.userPage
+                        |> map UserPageMsg
                 Nothing ->
                     View.notFoundView
     in

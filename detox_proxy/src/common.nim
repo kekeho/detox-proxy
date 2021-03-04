@@ -10,7 +10,6 @@ import tables
 import strutils
 import options
 import times
-import base64
 
 
 type
@@ -27,12 +26,6 @@ type
 
 
 type
-    Basic* = object
-        username*: string
-        password*: string
-
-
-type
     HttpRequest = object
         headers*: Table[string, string]
         reqMethod*: HttpMethod
@@ -40,7 +33,6 @@ type
         port*: Port
         protocol*: string
         body*: string
-        basic*: Option[Basic]
 
 type
     Connection = ref object
@@ -59,7 +51,6 @@ proc safeClose*(a: AsyncSocket, b: AsyncSocket) =
 proc safeClose*(conn: Connection) =
     echo "disconnected"
     safeClose(conn.a, conn.b)
-
 
 
 var connlist {.threadvar.}: seq[Connection]
@@ -153,21 +144,6 @@ proc httpRequestParser*(raw: string): Option[HttpRequest] =
         let body_raw = raw.split("\n")[idx+1..len(lines)-1].join("\n")
         req.body = body_raw
 
-        # Basic
-        let auth = req.headers.getHeader("Proxy-Authorization")
-        if auth.isNone:
-            req.basic = none(Basic)
-        else:
-            let type_and_cred: string = auth.get()
-            let typ = type_and_cred.split(' ')[0]
-            if typ != "Basic":
-                return none(HttpRequest)
-
-            let cred = base64.decode(type_and_cred.split(" ")[1]).split(':')
-            let
-                username: string = cred[0]
-                pass: string = cred[1]
-            req.basic = some(Basic(username: username, password: pass))
     except IndexDefect, ValueError:
         return none(HttpRequest)
 
