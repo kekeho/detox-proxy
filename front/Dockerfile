@@ -1,19 +1,28 @@
 FROM caddy:2.2.1-alpine
 
 
-# Install elm
+# build elm from source
 
 RUN apk update
-RUN apk add gzip
+RUN apk add --no-cache ghc cabal wget musl-dev zlib-dev zlib-static ncurses-dev ncurses-static git
 
 RUN mkdir /elm
 WORKDIR /elm
-RUN wget https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz
-RUN gunzip binary-for-linux-64-bit.gz
 
-RUN mv binary-for-linux-64-bit elm
-RUN chmod +x elm
-RUN cp elm /usr/local/bin/elm
+RUN git clone https://github.com/elm/compiler.git
+WORKDIR /elm/compiler
+
+RUN rm -r docs hints installers worker
+
+RUN cabal new-update
+RUN cabal new-build --ghc-option=-optl=-static --ghc-option=-split-sections
+RUN cp ./dist-newstyle/build/*-linux/ghc-*/elm-*/x/elm/build/elm/elm /usr/local/bin/elm
+
+
+# remove debug symbol
+RUN strip -s /usr/local/bin/elm
+
+RUN rm -rf /elm
 
 
 # build front
