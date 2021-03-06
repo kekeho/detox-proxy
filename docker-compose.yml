@@ -1,0 +1,51 @@
+version: "3"
+services: 
+  caddy:
+    build: front
+    environment: 
+      TZ: "UTC"
+      HOSTNAME: ${DETOX_PROXY_HOST}
+    ports:
+      - 8000:80
+      - 8001:443
+    volumes:
+      - ./front/cert.crt:/cert/cert.crt
+      - ./front/cert.key:/cert/cert.key
+
+
+  proxy:
+    build: detox_proxy
+    ports:
+      - 5001:5001
+    command: ./detox_proxy
+
+
+  api:
+    build: api
+    links:
+      - apidb
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+      DETOX_PROXY_HOST: ${DETOX_PROXY_HOST}
+      DETOX_PROXY_PORT: ${DETOX_PROXY_PORT}
+      DETOX_PROXY_PROXY_HOST: ${DETOX_PROXY_PROXY_HOST}
+      DETOX_PROXY_PROXY_HTTP_PORT: ${DETOX_PROXY_PROXY_HTTP_PORT}
+      DETOX_PROXY_PROXY_API_PORT: ${DETOX_PROXY_PROXY_API_PORT}
+    depends_on:
+      - proxy
+      - apidb
+
+  apidb:
+    image: postgres
+    environment: 
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+      DETOX_PROXY_HOST: ${DETOX_PROXY_HOST}
+      DETOX_PROXY_PORT: ${DETOX_PROXY_PORT}
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+
+volumes:
+  pgdata:
+    driver: local  

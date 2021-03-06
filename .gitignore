@@ -1,0 +1,6 @@
+.vscode
+test
+.mypy_cache
+
+# Secret
+email.env

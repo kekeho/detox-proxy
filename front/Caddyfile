@@ -1,0 +1,21 @@
+# WEBSITE
+
+{$HOSTNAME} {
+    tls /cert/cert.crt /cert/cert.key
+    encode zstd gzip
+    route /api/* {
+        reverse_proxy api:8000
+    }
+
+    route /* {
+        root * /public/
+
+        try_files {path} index.html
+
+        file_server
+    }
+
+    route /proxy.pac {
+        reverse_proxy api:8000
+    }
+}

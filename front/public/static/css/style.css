@@ -1,0 +1,239 @@
+/**
+ * Copyright (c) 2021 Hiroki Takemura (kekeho)
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
+/* GLOBAL CSS */
+
+:root {
+    --key-color: #4946f1;
+    --font-color: #0c0c0c;
+    --bg-color: #f1f1f1;
+    --header-height: 4rem;
+
+    --panel-boxshadow:
+        .5rem .5rem 1rem #d3d3d3,
+        -.5rem -.5rem .5rem #ffffff;
+    
+    --inset-boxshadow:
+        inset .5rem .5rem .5rem #d3d3d3,
+        inset -.5rem -.5rem .5rem #ffffff;
+    
+    --simple-border: solid 1px #1a1a1a;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
+
+    background-color: var(--bg-color);
+
+    color: var(--font-color);
+
+    word-wrap: break-word;
+    word-break: keep-all;
+}
+
+
+@media screen and (max-width: 480px) {
+    header {
+        width: calc(100% - 2rem);
+        padding: .5rem 1rem;
+    }
+
+    header .logo {
+        font-size: 1.5rem;
+    }
+}
+
+@media screen and (min-width: 480px) {
+    header {
+        width: calc(100% - 4rem);
+        padding: .5rem 2rem;
+    }
+
+    header .logo {
+        font-size: 2rem;
+    }
+}
+
+
+button:focus {
+    outline: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+
+header {
+    height: calc(var(--header-height) - 1rem);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: solid 1px #838383;
+}
+
+header a {
+    text-decoration: none;
+    height: 100%;
+    width: max-content;
+}
+
+header .logo {
+    height: 100%;
+    font-weight: 800;
+    color: var(--key-color);
+}
+
+header .logo img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+header .nav {
+    width: fit-content;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+header .nav a {
+    text-decoration: none;
+    color: var(--font-color);
+    font-weight: 500;
+    height: max-content;
+}
+
+header .nav .regist {
+    margin-left: 1rem;
+    padding: .25rem 1rem;
+    font-weight: 700;
+
+    color: #fff;
+    border-radius: .8rem;
+    background-color: var(--key-color);
+}
+
+header .nav .login {
+    margin-left: 1rem;
+}
+
+.content {
+    min-height: calc(100vh - var(--header-height));
+    width: 100%;
+}
+
+
+footer {
+    width: calc(100% - 4rem);
+    padding: 2rem;
+    background-color: #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+
+    justify-content: space-between;
+}
+
+footer .logo {
+    width: fit-content;
+    height: fit-content;
+    font-size: 2rem;
+    font-weight: 800;
+    background-color: var(--key-color);
+    color: #fff;
+    padding: .25rem .5rem;
+}
+
+
+
+
+/* GENERAL */
+
+
+@media screen and (min-width: 480px) {
+    .panel {
+        padding: 2rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .panel {
+        padding: 1rem;
+    }
+}
+
+
+.panel {
+    margin: 1rem;
+    border-radius: 2rem;
+    box-shadow: var(--panel-boxshadow);
+
+    background-color: var(--bg-color);
+}
+
+.panel.flat {
+    box-shadow: none;
+}
+
+
+.panel h1 {
+    font-weight: 800;
+    margin-top: 0;
+}
+
+
+.content .panel form {
+    max-width: 20rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.content .panel form .form-column {
+    margin: 1rem .5rem;
+}
+
+
+.content .panel form .form-column label {
+    display: block;
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+
+.content .panel form .form-column input {
+    display: block;
+    width: 100%;
+    font-size: 1.5rem;
+    border: none;
+    padding: 0;
+    background-color: var(--bg-color);
+    border-bottom: var(--simple-border)
+}
+
+
+.content .panel form input[type=submit] {
+    border: solid 1px #ffffff;
+    border-radius: .8rem;
+    background-color: var(--key-color);
+    color: #ffffff;
+    width: fit-content;
+    font-size: 1.2rem;
+
+    display: inline;
+    padding: .1rem .7rem;
+}
+
+
+.text-left {
+    text-align: left;
+}

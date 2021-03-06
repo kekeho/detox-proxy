@@ -1,0 +1,54 @@
+version: "3"
+services: 
+  caddy:
+    build: front
+    environment: 
+      TZ: "UTC"
+      HOSTNAME: "localhost"
+    ports:
+      - 8000:80
+      - 8001:443
+    volumes:
+      - ./front/Caddyfile:/code/Caddyfile
+      - ./front/public:/public
+      - ./front/cert.crt:/cert/cert.crt
+      - ./front/cert.key:/cert/cert.key
+
+  proxy:
+    build: detox_proxy
+    ports:
+      - 5001:5001
+      - 5002:5002
+
+  api:
+    build: 
+      context: api
+      dockerfile: DockerfileDev
+    volumes:
+      - ./api:/code
+    links:
+      - apidb
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+      DETOX_PROXY_HOST: "localhost"
+      DETOX_PROXY_PORT: "8001"
+      DETOX_PROXY_PROXY_HOST: "localhost"
+      DETOX_PROXY_PROXY_HTTP_PORT: "5001"
+      DETOX_PROXY_PROXY_API_PORT: "5002"
+    depends_on:
+      - proxy
+      - apidb
+
+  apidb:
+    image: postgres
+    environment: 
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pg_password"  # WARNING: 運用するときにはパスワードを変える・隠す
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+
+
+volumes:
+  pgdata:
+    driver: local 
