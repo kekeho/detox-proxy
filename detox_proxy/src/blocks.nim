@@ -7,6 +7,7 @@ import json
 import strutils
 import hashes
 import times
+import common
 import options
 
 
@@ -19,11 +20,8 @@ type
         active: bool
 
 
-proc hash(b: Block): Hash =
-    return hash($b.url)
-
-
-var accessLog {.threadvar.}: Table[Block, Option[DateTime]]  # block: first access
+var blockList {.threadvar.}: Table[string, Block]
+var accessLog {.threadvar.}: Table[string, Option[DateTime]]  # block address: first access
 
 
 proc registBlock(req: Request) {.async.} =
@@ -37,7 +35,6 @@ proc registBlock(req: Request) {.async.} =
         await req.respond(Http422, "Validation Error")
         return
 
-    var blockList: seq[Block]
     try:
         for b in blockNode.getElems():
             let blockObj = Block(
@@ -46,18 +43,18 @@ proc registBlock(req: Request) {.async.} =
                 endTime: b["end"].getInt,
                 active: b["active"].getBool,
             )
-            blockList.add(blockObj)
+            blockList[blockObj.url.pickHost] = blockObj
     except KeyError:
         await req.respond(Http422, "Validation Error")
         return
 
-    for b in blockList:
+    for address in blockList.keys():
         var oldVal: Option[DateTime]
         try:
-            oldVal = accessLog[b]
+            oldVal = accessLog[address]
         except KeyError:
             oldVal = none(DateTime)
-        accessLog[b] = oldVal
+        accessLog[address] = oldVal
     
     await req.respond(Http201, "Registered")
     return
@@ -80,33 +77,33 @@ proc serveBlocksServer*() {.async.} =
 
 
 proc isAccessable*(address: Uri): bool =
-    # hash(block)は, hash($block.url)なので, urlが一緒ならマッチする
-    let dummyBlock = Block(url: address)
+    echo "ACCESS CHECK"
+    echo address
 
     var
         maybeLog: Option[DateTime]
-        blockObj: Block
     try:
-        maybeLog = accessLog[dummyBlock]
+        echo accessLog
+        maybeLog = accessLog[pickHost(address)]
     except KeyError:
+        echo "NO BLOCK"
         return true
 
-    for b, l in accessLog.pairs():
-        if hash(b) == hash(dummyBlock):
-            blockObj = b
-            maybeLog = l
+    let blockObj = blockList[address.pickHost]
+    echo "BLOCK LIST"
+    echo blockObj.url
 
     if blockObj.active == false:
         return true
 
     if maybeLog.isNone:
-        accessLog[blockObj] = some(now())
+        accessLog[address.pickHost] = some(now())
         return true
 
     let log = maybeLog.get()
     if now() - log > initDuration(minutes=blockObj.startTime):
         if now() - log > initDuration(minutes=blockObj.startTime + blockObj.endTime):
-            accessLog[blockObj] = none(DateTime)
+            accessLog[address.pickHost] = none(DateTime)
             return true
         else:
             return false

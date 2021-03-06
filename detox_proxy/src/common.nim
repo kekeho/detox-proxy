@@ -10,6 +10,7 @@ import tables
 import strutils
 import options
 import times
+import uri
 
 
 type
@@ -54,6 +55,22 @@ proc safeClose*(conn: Connection) =
 
 
 var connlist {.threadvar.}: seq[Connection]
+
+
+proc pickHost*(a: string): string =
+    var
+        aHost: string = a
+    if "://" in aHost:
+        aHost = aHost.split("://")[1]
+
+    if "/" in aHost:
+        aHost = aHost.split("/")[1]
+    
+    return aHost
+
+
+proc pickHost*(a: Uri): string =
+    pickHost($a)
 
 
 proc hasHeader(t: Table[string, auto], key: string): bool =
@@ -151,7 +168,7 @@ proc httpRequestParser*(raw: string): Option[HttpRequest] =
 
 
 proc connwatch*() {.async.} =
-    const nodata_timelimit = 120 # 120s (from last recv/send)
+    const nodata_timelimit = 60 # 60s (from last recv/send)
 
     var count = 0
     while true:
@@ -191,7 +208,8 @@ proc relay*(from_socket: AsyncSocket, to_socket: AsyncSocket) {.async.} =
         try:
             let data = await conn.a.recv(1024)
             if data.len == 0:
-                continue
+                safeClose(conn)
+                return
 
             await conn.b.send(data)
             conn.last_timestamp = now().toTime.toUnix
